@@ -271,7 +271,7 @@ class SuccessScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: const Text('Enviar p/ Bia'),
+              child: const Text('Enviar'),
             ),
             ElevatedButton(
               onPressed: () {
