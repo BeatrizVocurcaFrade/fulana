@@ -48,7 +48,7 @@ Future<void> launchWhatsApp(context) async {
 
 class _InviteHomePageState extends State<InviteHomePage> {
   final String girlName = 'Fulana'; // Nome dela
-  final String photoPath = 'assets/images/Sample3.png'; // Foto dela
+  final String photoPath = 'assets/Sample3.png'; // Foto dela
   final List<String> places = [
     'Bar',
     'Restaurante',
@@ -71,7 +71,7 @@ class _InviteHomePageState extends State<InviteHomePage> {
           'Convite Especial ❤️',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xFFB39DDB),
+        backgroundColor: const Color(0xFFB39DDB),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -123,7 +123,7 @@ class _InviteHomePageState extends State<InviteHomePage> {
                     child: ListTile(
                       leading: Icon(
                         icons[places[index]],
-                        color: Color(0xFFB39DDB),
+                        color: const Color(0xFFB39DDB),
                       ),
                       title: Text(places[index],
                           style: const TextStyle(fontSize: 18)),
