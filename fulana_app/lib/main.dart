@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const InviteApp());
 }
 
+String formattedDate(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
 String placeA = "";
 DateTime dateA = DateTime.now();
 TimeOfDay timeA = TimeOfDay.now(); // Variável para armazenar a hora
@@ -33,9 +35,11 @@ class InviteHomePage extends StatefulWidget {
   _InviteHomePageState createState() => _InviteHomePageState();
 }
 
-Future<void> launchWhatsApp(context) async {
-  final String inviteMessage =
-      "Nosso encontro está marcado!!!\n Vamos sair para... \n\nLocal: $placeA\nData: ${dateA.toLocal().toString().split(' ')[0]} \nHorário: ${timeA.format(context)}? 😄"; // Inclui o horário
+Future<void> launchWhatsApp(BuildContext context) async {
+  final String inviteMessage = """
+Eii, ameii o convite!! 🎉🎉   
+Vamos para o *$placeA* no dia *${formattedDate(dateA)}* e às *${timeA.format(context)}* hrs, o que acha?😊""";
+
   const String phone = "31989183607";
   String phoneNumber = "https://wa.me/55$phone?text=";
 
@@ -43,6 +47,7 @@ Future<void> launchWhatsApp(context) async {
     phoneNumber: phoneNumber,
     text: inviteMessage,
   );
+
   await launchUrlString('$link', mode: LaunchMode.externalApplication);
 }
 
@@ -68,7 +73,7 @@ class _InviteHomePageState extends State<InviteHomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'Convite Especial ❤️',
+          '✨ Convite Especial ✨',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFFB39DDB),
@@ -202,17 +207,59 @@ class SuccessScreen extends StatelessWidget {
                   color: Color(0xFFB39DDB)),
             ),
             const SizedBox(height: 10),
-            Text(
-              'Local: $place',
-              style: const TextStyle(fontSize: 18, color: Colors.black87),
-            ),
-            Text(
-              'Data: ${date.toLocal().toString().split(' ')[0]}',
-              style: const TextStyle(fontSize: 18, color: Colors.black87),
-            ),
-            Text(
-              'Horário: ${time.format(context)}',
-              style: const TextStyle(fontSize: 18, color: Colors.black87),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.place, color: Color(0xFFB39DDB), size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Em um $place',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.calendar_today,
+                        color: Color(0xFFB39DDB), size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      'No dia ${formattedDate(date)}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.access_time,
+                        color: Color(0xFFB39DDB), size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Ás ${time.format(context)} hrs',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(height: 30),
             ElevatedButton(
