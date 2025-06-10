@@ -54,6 +54,7 @@ Vamos para o *$placeA* no dia *${formattedDate(dateA)}* e às *${timeA.format(co
 class _InviteHomePageState extends State<InviteHomePage> {
   final String girlName = 'Fulana'; // Nome dela
   final String photoPath = 'assets/Sample3.png'; // Foto dela
+   final String photoPath2 = 'assets/Sample2.png'; // Foto minha
   final List<String> places = [
     'Bar',
     'Restaurante',
