@@ -1,293 +1,357 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:whatsapp_unilink/whatsapp_unilink.dart';
-import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 void main() {
-  runApp(const InviteApp());
+  runApp(const RomanticApp());
 }
 
-String formattedDate(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
-String placeA = "";
-DateTime dateA = DateTime.now();
-TimeOfDay timeA = TimeOfDay.now(); // Variável para armazenar a hora
-
-class InviteApp extends StatelessWidget {
-  const InviteApp({super.key});
+class RomanticApp extends StatelessWidget {
+  const RomanticApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Remove o banner de debug
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.pink, // Tema romântico
+        textTheme: GoogleFonts.dmSerifDisplayTextTheme(),
       ),
-      home: const InviteHomePage(),
+      home: const RomanticHomePage(),
     );
   }
 }
 
-class InviteHomePage extends StatefulWidget {
-  const InviteHomePage({super.key});
+class RomanticHomePage extends StatefulWidget {
+  const RomanticHomePage({super.key});
 
   @override
-  _InviteHomePageState createState() => _InviteHomePageState();
+  State<RomanticHomePage> createState() => _RomanticHomePageState();
 }
 
-Future<void> launchWhatsApp(BuildContext context) async {
-  final String inviteMessage = """
-Eii, ameii o convite!! 🎉🎉   
-Vamos para o *$placeA* no dia *${formattedDate(dateA)}* e às *${timeA.format(context)}* hrs, o que acha?😊""";
+class _RomanticHomePageState extends State<RomanticHomePage>
+    with TickerProviderStateMixin {
+  late AnimationController _photoController;
+  late AnimationController _pulseController;
+  late Animation<Offset> _girlOffset;
+  late Animation<Offset> _boyOffset;
+  late Animation<double> _pulseAnimation;
 
-  const String phone = "31989183607";
-  String phoneNumber = "https://wa.me/55$phone?text=";
-
-  final link = WhatsAppUnilink(
-    phoneNumber: phoneNumber,
-    text: inviteMessage,
-  );
-
-  await launchUrlString('$link', mode: LaunchMode.externalApplication);
-}
-
-class _InviteHomePageState extends State<InviteHomePage> {
-  final String girlName = 'Fulana'; // Nome dela
-  final String photoPath = 'assets/Sample3.png'; // Foto dela
-   final String photoPath2 = 'assets/Sample2.png'; // Foto minha
-  final List<String> places = [
-    'Bar',
-    'Restaurante',
-    'Museu',
-    'Cinema',
-  ];
-  final Map<String, IconData> icons = {
-    'Bar': Icons.local_bar,
-    'Restaurante': Icons.restaurant,
-    'Museu': Icons.house,
-    'Cinema': Icons.movie,
-  };
+  double _x = 0;
+  double _y = 0;
+  bool _showText = true;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          '✨ Convite Especial ✨',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFFB39DDB),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Exibindo a foto dela com efeito suave
-            CircleAvatar(
-              radius: 80,
-              backgroundImage: AssetImage(photoPath),
-              child: const Align(
-                alignment: Alignment.bottomRight,
-                child: Icon(Icons.favorite, color: Colors.redAccent, size: 30),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Mensagem animada com efeito de digitação
-            AnimatedTextKit(
-              animatedTexts: [
-                TypewriterAnimatedText(
-                  'Eii $girlName, você está convidada para um encontro especial!',
-                  textAlign: TextAlign.center,
-                  textStyle: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFB39DDB),
-                  ),
-                  speed: const Duration(milliseconds: 100),
-                ),
-              ],
-              totalRepeatCount: 1,
-            ),
-            const SizedBox(height: 20),
-            // Opções de lugares com ícones
-            const Text(
-              'Escolha o local:',
-              style: TextStyle(fontSize: 18, color: Colors.black54),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: places.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ListTile(
-                      leading: Icon(
-                        icons[places[index]],
-                        color: const Color(0xFFB39DDB),
-                      ),
-                      title: Text(places[index],
-                          style: const TextStyle(fontSize: 18)),
-                      onTap: () {
-                        showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime(2100),
-                        ).then((selectedDate) {
-                          placeA = places[index];
-                          dateA = selectedDate ?? DateTime.now();
-                          if (selectedDate != null) {
-                            // Após escolher a data, pede para escolher o horário
-                            showTimePicker(
-                              context: context,
-                              initialTime: timeA,
-                            ).then((selectedTime) {
-                              timeA = selectedTime ?? TimeOfDay.now();
-                              if (selectedTime != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SuccessScreen(
-                                      place: places[index],
-                                      date: selectedDate,
-                                      time: selectedTime,
-                                    ),
-                                  ),
-                                );
-                              }
-                            });
-                          }
-                        });
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+  void initState() {
+    super.initState();
+
+    _photoController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
     );
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _girlOffset = Tween<Offset>(
+      begin: const Offset(-2, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _photoController, curve: Curves.easeOut));
+
+    _boyOffset = Tween<Offset>(
+      begin: const Offset(2, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _photoController, curve: Curves.easeOut));
+
+    _photoController.forward().whenComplete(() {
+      _pulseController.repeat(reverse: true);
+    });
   }
+
+  @override
+  void dispose() {
+    _photoController.dispose();
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+void _moveButton() {
+  final rand = Random();
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
+  const double buttonWidth = 100;
+  const double buttonHeight = 50;
+
+  // Geração de deslocamento entre 20 e 40 (em módulo), com sinal aleatório
+  double dx = (40 + rand.nextDouble() * 40) * (rand.nextBool() ? 1 : -1);
+  double dy = (40 + rand.nextDouble() * 40) * (rand.nextBool() ? 1 : -1);
+
+  double newX = _x + dx;
+  double newY = _y + dy;
+
+  newX = newX.clamp(-screenWidth / 2 + buttonWidth / 2, screenWidth / 2 - buttonWidth * 1.5);
+  newY = newY.clamp(-screenHeight / 2 + buttonHeight / 2, screenHeight / 2 - buttonHeight * 2);
+
+  setState(() {
+    _x = newX;
+    _y = newY;
+  });
 }
 
-// Tela de sucesso após marcar o encontro
-class SuccessScreen extends StatelessWidget {
-  const SuccessScreen(
-      {super.key, required this.place, required this.date, required this.time});
+  void _resetAnimation() {
+    _photoController.reset();
+    _photoController.forward();
+    _pulseController.reset();
+    _pulseController.repeat(reverse: true);
+    setState(() {
+      _x = 0;
+      _y = 0;
+      _showText = false;
+    });
 
-  final String place;
-  final DateTime date;
-  final TimeOfDay time; // Hora marcada
+    Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() => _showText = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.check_circle, // Ícone de sucesso
-              color: Colors.green, // Cor do ícone
-              size: 100, // Tamanho do ícone
+      body: Stack(
+        children: [
+          // 🖼️ Fundo com imagem
+          Positioned.fill(
+            child: Image.asset(
+              'assets/Sample1.jpg',
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Encontro marcado!',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFB39DDB)),
-            ),
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+          ),
+
+          SafeArea(
+            child: Stack(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.place, color: Color(0xFFB39DDB), size: 24),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Em um $place',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
+                // Texto animado
+                if (_showText)
+                  Positioned(
+                    top: 75,
+                    left: 20,
+                    right: 20,
+                    child: Center(
+                      child: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            'Meu bemm, animaria passar o Dia dos Namorados comigo?',
+                            textStyle: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                            speed: const Duration(milliseconds: 80),
+                          ),
+                        ],
+                        totalRepeatCount: 1,
+                        isRepeatingAnimation: false,
                       ),
                     ),
-                  ],
+                  ),
+
+                // Imagens com sombra e pulsar
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      
+                      SlideTransition(
+                        position: _boyOffset,
+                        child: ScaleTransition(
+                          scale: _pulseAnimation,
+                          child: Container(
+                            margin: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withOpacity(0.3),
+                                  blurRadius: 20,
+                                  spreadRadius: 2,
+                                  offset: const Offset(-4, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipPath(
+                              clipper: HeartClipper(),
+                              child: Image.asset(
+                                'assets/Sample2.jpeg',
+                                width: size.width * 0.4,
+                                height: size.height * 0.2,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),SlideTransition(
+                        position: _girlOffset,
+                        child: ScaleTransition(
+                          scale: _pulseAnimation,
+                          child: Container(
+                            margin: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.deepPurple.withOpacity(0.3),
+                                  blurRadius: 20,
+                                  spreadRadius: 2,
+                                  offset: const Offset(4, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipPath(
+                              clipper: HeartClipper(),
+                              child: Image.asset(
+                                'assets/Sample3.png',
+                                width: size.width * 0.4,
+                                height: size.height * 0.2,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.calendar_today,
-                        color: Color(0xFFB39DDB), size: 24),
-                    const SizedBox(width: 8),
-                    Text(
-                      'No dia ${formattedDate(date)}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+
+                // Coração animado
+                Positioned(
+                  top: size.height * 0.45,
+                  left: size.width / 2 - 75,
+                  child: Lottie.asset(
+                    'assets/heart.json',
+                    width: 150,
+                    repeat: true,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.access_time,
-                        color: Color(0xFFB39DDB), size: 24),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Ás ${time.format(context)} hrs',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+
+                // Botão "Não" que foge (dentro da Stack ainda)
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  left: size.width / 1.8  + _x,
+                  bottom: 100 + _y,
+                  child:ElevatedButton(
+  onPressed: _moveButton,
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.grey[300],
+    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+  ),
+  child: const Text(
+    'Não 😢',
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 18,
+    ),
+  ),
+),
+
                 ),
               ],
             ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                launchWhatsApp(context);
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+          ),
+
+          // Botões "Sim" e Reset fora da Stack principal
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Linha com os dois botões
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                              title: const Text('❤️ Sim!'),
+                              content: const Text(
+                                textAlign: TextAlign.center,
+                                  'Já estou preparando algo especial para nós... ✨'),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Fechar'),
+                                  onPressed: () => Navigator.pop(context),
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      style: ElevatedButton.styleFrom(
+  backgroundColor: const Color(0xFF932F6D),
+  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(30),
+  ),
+),
+child: const Text('Sim ❤️',
+  style: TextStyle(color: Colors.white, fontSize: 18)),
+                      ),
+                      const SizedBox(width: 16),
+                      // Botão "Não" aqui só de placeholder — o real está na Stack
+                      const SizedBox(width: 100), // espaço para não sobrepor
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Reset
+                  TextButton.icon(
+                    onPressed: _resetAnimation,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text("Resetar"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF932F6D),
+                    ),
+                  ),
+                ],
               ),
-              child: const Text('Enviar'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text('Voltar ao convite'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+}
+class HeartClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final Path path = Path();
+    final double w = size.width;
+    final double h = size.height;
+    path.moveTo(w / 2, h / 4);
+    path.cubicTo(5 * w / 14, 0, 0, h / 15, w / 28, 2 * h / 5);
+    path.cubicTo(w / 14, 2 * h / 3, 3 * w / 7, 5 * h / 6, w / 2, h);
+    path.cubicTo(4 * w / 7, 5 * h / 6, 13 * w / 14, 2 * h / 3, 27 * w / 28, 2 * h / 5);
+    path.cubicTo(w, h / 15, 9 * w / 14, 0, w / 2, h / 4);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

@@ -78,6 +78,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.1
   audioplayers: ^6.1.0
   lottie: ^3.1.2
+  google_fonts: ^6.2.1
   animated_text_kit: ^4.2.2
   url_launcher: ^6.3.0
   whatsapp_unilink: ^2.1.0
