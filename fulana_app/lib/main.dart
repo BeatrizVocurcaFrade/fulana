@@ -49,17 +49,13 @@ class _RomanticHomePageState extends State<RomanticHomePage> {
       "name": "Quintalzinho da Pampulha",
       "description": "Espaço ao ar livre, descontraído e cheio de charme.",
       "latLng": LatLng(-19.8672, -43.9895),
-    },
+    }, 
     {
       "name": "Chalezinho da Pampulha",
       "description": "Lugar romântico, com vista linda e clima de cabana dos sonhos.",
       "latLng": LatLng(-19.8710, -43.9908),
     },
-    {
-      "name": "Bar do Museu Clube da Esquina",
-      "description": "Música boa, vibes culturais e drinks autorais num cantinho especial.",
-      "latLng": LatLng(-19.9367, -43.9378),
-    },
+  
   ];
 
   late LatLng _currentLocation = LatLng(-19.8686, -43.9917); // Posição inicial
@@ -71,12 +67,10 @@ class _RomanticHomePageState extends State<RomanticHomePage> {
     _mapController = MapController();
   }
 
-  // Método para alterar a posição do mapa
+  // Método para alterar a posição do mapa com zoom imediato
   void _focusOnBar(LatLng latLng) {
-    setState(() {
-      _currentLocation = latLng;
-    });
-    _mapController.move(latLng, 14.5); // Mover para a nova posição
+    // Aplica o zoom diretamente ao ponto clicado
+    _mapController.move(latLng, 16.5); // Centraliza e aplica o zoom
   }
 
   @override
@@ -161,7 +155,7 @@ class _RomanticHomePageState extends State<RomanticHomePage> {
                   final bar = _bars[index];
                   return GestureDetector(
                     onTap: () {
-                      _focusOnBar(bar['latLng']);
+                      _focusOnBar(bar['latLng']); // Chama o método para aplicar o zoom
                     },
                     child: Card(
                       elevation: 4,
