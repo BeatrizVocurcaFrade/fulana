@@ -1,9 +1,9 @@
-// ignore_for_file: library_prefixes
-
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as googleMaps;
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:lottie/lottie.dart' as lottie;
 
 void main() {
@@ -34,56 +34,49 @@ class RomanticHomePage extends StatefulWidget {
 }
 
 class _RomanticHomePageState extends State<RomanticHomePage> {
-  late googleMaps.GoogleMapController _mapController;
-  late googleMaps.LatLng _currentLocation;
+  final List<Map<String, dynamic>> _bars = [
+    {
+      "name": "Charada Pampulha",
+      "description": "Bar aconchegante com chope gelado e clima perfeito pra casal.",
+      "latLng": LatLng(-19.8655, -43.9924),
+    },
+    {
+      "name": "Bistrô Chaplin",
+      "description": "Ambiente intimista com pratos refinados e toque francês.",
+      "latLng": LatLng(-19.8702, -43.9932),
+    },
+    {
+      "name": "Quintalzinho da Pampulha",
+      "description": "Espaço ao ar livre, descontraído e cheio de charme.",
+      "latLng": LatLng(-19.8672, -43.9895),
+    },
+    {
+      "name": "Chalezinho da Pampulha",
+      "description": "Lugar romântico, com vista linda e clima de cabana dos sonhos.",
+      "latLng": LatLng(-19.8710, -43.9908),
+    },
+    {
+      "name": "Bar do Museu Clube da Esquina",
+      "description": "Música boa, vibes culturais e drinks autorais num cantinho especial.",
+      "latLng": LatLng(-19.9367, -43.9378),
+    },
+  ];
 
-  final Set<googleMaps.Marker> _markers = {};
-final List<Map<String, String>> _bars = [
-  {
-    "name": "Charada Pampulha",
-    "description": "Bar aconchegante com chope gelado e clima perfeito pra casal."
-  },
-  {
-    "name": "Bistrô Chaplin",
-    "description": "Ambiente intimista com pratos refinados e toque francês."
-  },
-  {
-    "name": "Quintalzinho da Pampulha",
-    "description": "Espaço ao ar livre, descontraído e cheio de charme."
-  },
-  {
-    "name": "Chalezinho da Pampulha",
-    "description": "Lugar romântico, com vista linda e clima de cabana dos sonhos."
-  },
-  {
-    "name": "Bar do Museu Clube da Esquina",
-    "description": "Música boa, vibes culturais e drinks autorais num cantinho especial."
-  },
-];
-
+  late LatLng _currentLocation = LatLng(-19.8686, -43.9917); // Posição inicial
+  late MapController _mapController;
 
   @override
   void initState() {
     super.initState();
-    _currentLocation = const googleMaps.LatLng(-19.8686, -43.9917);
+    _mapController = MapController();
+  }
 
-    _markers.addAll([
-      googleMaps.Marker(
-        markerId: const googleMaps.MarkerId('charada'),
-        position: const googleMaps.LatLng(-19.8655, -43.9924),
-        infoWindow: const googleMaps.InfoWindow(title: 'Charada Pampulha'),
-      ),
-      googleMaps.Marker(
-        markerId: const googleMaps.MarkerId('bistro'),
-        position: const googleMaps.LatLng(-19.8702, -43.9932),
-        infoWindow: const googleMaps.InfoWindow(title: 'Bistrô Chaplin'),
-      ),
-      googleMaps.Marker(
-        markerId: const googleMaps.MarkerId('cafe'),
-        position: const googleMaps.LatLng(-19.8731, -43.9872),
-        infoWindow: const googleMaps.InfoWindow(title: 'Café com Letras'),
-      ),
-    ]);
+  // Método para alterar a posição do mapa
+  void _focusOnBar(LatLng latLng) {
+    setState(() {
+      _currentLocation = latLng;
+    });
+    _mapController.move(latLng, 14.5); // Mover para a nova posição
   }
 
   @override
@@ -91,13 +84,33 @@ final List<Map<String, String>> _bars = [
     return Scaffold(
       body: Stack(
         children: [
-          googleMaps.GoogleMap(
-            initialCameraPosition: googleMaps.CameraPosition(
-              target: _currentLocation,
-              zoom: 15,
+          // Mapa usando flutter_map (funciona em web e mobile)
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              center: _currentLocation,
+              zoom: 14.5,
             ),
-            onMapCreated: (controller) => _mapController = controller,
-            markers: _markers,
+            children: [
+              TileLayer(
+                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+              ),
+              MarkerLayer(
+                markers: _bars.map((bar) {
+                  return Marker(
+                    point: bar['latLng'],
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.location_pin,
+                      color: Colors.pink,
+                      size: 40,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
 
           // Texto animado com fundo
@@ -130,7 +143,7 @@ final List<Map<String, String>> _bars = [
             ),
           ),
 
-          // Lista de lugares
+          // Lista de bares
           Positioned(
             bottom: 0,
             left: 0,
@@ -146,36 +159,30 @@ final List<Map<String, String>> _bars = [
                 itemCount: _bars.length,
                 itemBuilder: (context, index) {
                   final bar = _bars[index];
-                  return Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        bar['name']!,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pink,
+                  return GestureDetector(
+                    onTap: () {
+                      _focusOnBar(bar['latLng']);
+                    },
+                    child: Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          bar['name'],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pink,
+                          ),
+                        ),
+                        subtitle: Text(
+                          bar['description'],
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
-                      subtitle: Text(
-                        bar['description']!,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      onTap: () {
-                        _mapController.animateCamera(
-                          googleMaps.CameraUpdate.newLatLngZoom(
-                            googleMaps.LatLng(
-                              _currentLocation.latitude + index * 0.001,
-                              _currentLocation.longitude + index * 0.001,
-                            ),
-                            16,
-                          ),
-                        );
-                      },
                     ),
                   );
                 },
@@ -183,7 +190,7 @@ final List<Map<String, String>> _bars = [
             ),
           ),
 
-          // Foto da garota com sombra e borda
+          // Foto decorativa
           Positioned(
             top: 120,
             right: 20,
@@ -210,7 +217,7 @@ final List<Map<String, String>> _bars = [
             ),
           ),
 
-          // Coração animado (opcional)
+          // Coração animado
           Positioned(
             top: 15,
             right: -5,
