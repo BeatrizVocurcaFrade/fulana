@@ -1,4 +1,4 @@
-# name: joyce_app
+# name: isabela_app
 # description: "A new Flutter project."
 # publish_to: "none"
 
@@ -43,7 +43,7 @@
 #     - assets/icon-192.png
 #     - assets/
 
-name: joyce_app
+name: isabela_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -84,6 +84,7 @@ dependencies:
   whatsapp_unilink: ^2.1.0
   flutter_native_splash: ^2.4.3
   cupertino_icons: ^1.0.8
+  google_maps_flutter: ^2.1.1
   intl: ^0.18.0
 
 dev_dependencies:
