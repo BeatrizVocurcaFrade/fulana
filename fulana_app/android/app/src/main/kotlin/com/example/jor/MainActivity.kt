@@ -1,4 +1,4 @@
-package com.example.fulana_app
+package com.example.joyce_app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "fulana_app" "\0"
+            VALUE "FileDescription", "joyce_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "fulana_app" "\0"
+            VALUE "InternalName", "joyce_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "fulana_app.exe" "\0"
-            VALUE "ProductName", "fulana_app" "\0"
+            VALUE "OriginalFilename", "joyce_app.exe" "\0"
+            VALUE "ProductName", "joyce_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
