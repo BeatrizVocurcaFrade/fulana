@@ -1,6 +1,6 @@
 {
-    "name": "fulana_app",
-    "short_name": "fulana_app",
+    "name": "isabella_app",
+    "short_name": "isabella_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
