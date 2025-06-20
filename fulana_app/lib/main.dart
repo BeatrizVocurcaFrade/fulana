@@ -47,11 +47,11 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
       );
 
   Widget _ufmgLogo() => Positioned(
-        top: 20,
-        left: 20,
+        bottom: 40,
+        right: 40,
         child: Image.asset(
           'assets/Sample3.png',
-          width: 50,
+          width: 100,
         ),
       );
 
@@ -100,7 +100,7 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
             children: [
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(30.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -110,6 +110,7 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
                             style: GoogleFonts.poppins(
                                 fontSize: 24, fontWeight: FontWeight.bold)),
                         Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 16),
                             _item("💻 Desenvolvo interfaces com Flutter"),
@@ -133,7 +134,7 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
             children: [
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(30.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -144,10 +145,9 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.deepPurple)),
-                        Column(
+                        Column(   crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 16),
-                            lottie.Lottie.asset('assets/systems.json', height: 350),
+                            lottie.Lottie.asset('assets/systems.json', width: 450),
                             const SizedBox(height: 12),
                             _item("📐 Modelagem de sistemas (ex: estrutura do app, estados, rotas)"),
                             _item("🧠 Programação orientada a objetos (com Widgets e States)"),
@@ -169,7 +169,7 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
             children: [
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(30.0),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -1,4 +1,4 @@
-# name: isabela_app
+# name: trabalho_uf_app
 # description: "A new Flutter project."
 # publish_to: "none"
 
@@ -43,7 +43,7 @@
 #     - assets/icon-192.png
 #     - assets/
 
-name: isabela_app
+name: trabalho_uf_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
