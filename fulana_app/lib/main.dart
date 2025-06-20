@@ -1,225 +1,246 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:lottie/lottie.dart' as lottie;
 
 void main() {
-  runApp(const RomanticApp());
+  runApp(const PresentationApp());
 }
 
-class RomanticApp extends StatelessWidget {
-  const RomanticApp({super.key});
+class PresentationApp extends StatelessWidget {
+  const PresentationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-        textTheme: GoogleFonts.cardoTextTheme(),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.poppinsTextTheme(),
+        scaffoldBackgroundColor: Colors.white,
       ),
-      home: const RomanticHomePage(),
+      home: const PresentationHomePage(),
     );
   }
 }
 
-class RomanticHomePage extends StatefulWidget {
-  const RomanticHomePage({super.key});
+class PresentationHomePage extends StatefulWidget {
+  const PresentationHomePage({super.key});
 
   @override
-  State<RomanticHomePage> createState() => _RomanticHomePageState();
+  State<PresentationHomePage> createState() => _PresentationHomePageState();
 }
 
-class _RomanticHomePageState extends State<RomanticHomePage> {
-  final List<Map<String, dynamic>> _bars = [
-    {
-      "name": "Charada Pampulha",
-      "description": "Bar aconchegante com chope gelado e clima perfeito pra casal.",
-      "latLng": LatLng(-19.8655, -43.9924),
-    },
-    {
-      "name": "Bistrô Chaplin",
-      "description": "Ambiente intimista com pratos refinados e toque francês.",
-      "latLng": LatLng(-19.8702, -43.9932),
-    },
-    {
-      "name": "Quintalzinho da Pampulha",
-      "description": "Espaço ao ar livre, descontraído e cheio de charme.",
-      "latLng": LatLng(-19.8672, -43.9895),
-    }, 
-    {
-      "name": "Chalezinho da Pampulha",
-      "description": "Lugar romântico, com vista linda e clima de cabana dos sonhos.",
-      "latLng": LatLng(-19.8710, -43.9908),
-    },
-  
+class _PresentationHomePageState extends State<PresentationHomePage> {
+  final PageController _pageController = PageController();
+
+  final List<String> learningPoints = [
+    '💡 Pensar em soluções eficientes',
+    '🎨 Criar interfaces modernas e acessíveis',
+    '🔄 Trabalhar com versionamento e metodologias ágeis',
+    '🤝 Comunicar com times multidisciplinares',
   ];
 
-  late LatLng _currentLocation = LatLng(-19.8686, -43.9917); // Posição inicial
-  late MapController _mapController;
+  Widget _item(String text) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Text(text, style: GoogleFonts.poppins(fontSize: 16)),
+      );
 
-  @override
-  void initState() {
-    super.initState();
-    _mapController = MapController();
-  }
-
-  // Método para alterar a posição do mapa com zoom imediato
-  void _focusOnBar(LatLng latLng) {
-    // Aplica o zoom diretamente ao ponto clicado
-    _mapController.move(latLng, 16.5); // Centraliza e aplica o zoom
-  }
+  Widget _ufmgLogo() => Positioned(
+        top: 20,
+        left: 20,
+        child: Image.asset(
+          'assets/Sample3.png',
+          width: 50,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: PageView(
+        controller: _pageController,
         children: [
-          // Mapa usando flutter_map (funciona em web e mobile)
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              center: _currentLocation,
-              zoom: 14.5,
-            ),
+          // Tela 1: Introdução
+          Stack(
             children: [
-              TileLayer(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c'],
+              Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      lottie.Lottie.asset('assets/intro.json', width: 200),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          'Minha Jornada no Estágio',
+                          style: GoogleFonts.poppins(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Criando apps em Flutter',
+                        style: GoogleFonts.poppins(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              MarkerLayer(
-                markers: _bars.map((bar) {
-                  return Marker(
-                    point: bar['latLng'],
-                    width: 40,
-                    height: 40,
-                    child: const Icon(
-                      Icons.location_pin,
-                      color: Colors.pink,
-                      size: 40,
-                    ),
-                  );
-                }).toList(),
-              ),
+              _ufmgLogo(),
             ],
           ),
 
-          // Texto animado com fundo
-          Positioned(
-            top: 60,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.pink.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: AnimatedTextKit(
-                animatedTexts: [
-                  TypewriterAnimatedText(
-                    'Bemm, qual lugar vc prefere para o nosso datee!',
-                    textStyle: const TextStyle(
-                      fontSize: 22,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+          // Tela 2: O que faço
+          Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        lottie.Lottie.asset('assets/settings.json', width: 180),
+                        Text('O que eu faço',
+                            style: GoogleFonts.poppins(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            _item("💻 Desenvolvo interfaces com Flutter"),
+                            _item("🎨 Trabalho com animações e design responsivo"),
+                            _item("📡 Integro APIs e banco de dados"),
+                            _item("🔧 Corrijo bugs e otimizo o app"),
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      ],
                     ),
-                    speed: const Duration(milliseconds: 90),
                   ),
-                ],
-                totalRepeatCount: 1,
-                isRepeatingAnimation: false,
-                pause: Duration.zero,
-              ),
-            ),
-          ),
-
-          // Lista de bares
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 270,
-              decoration: const BoxDecoration(
-                color: Colors.white70,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: _bars.length,
-                itemBuilder: (context, index) {
-                  final bar = _bars[index];
-                  return GestureDetector(
-                    onTap: () {
-                      _focusOnBar(bar['latLng']); // Chama o método para aplicar o zoom
-                    },
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          bar['name'],
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.pink,
-                          ),
-                        ),
-                        subtitle: Text(
-                          bar['description'],
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // Foto decorativa
-          Positioned(
-            top: 120,
-            right: 20,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                    offset: Offset(2, 4),
-                  ),
-                ],
-                border: Border.all(color: Colors.white, width: 4),
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/Sample3.png',
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
                 ),
               ),
-            ),
+              _ufmgLogo(),
+            ],
           ),
 
-          // Coração animado
-          Positioned(
-            top: 15,
-            right: -5,
-            child: lottie.Lottie.asset(
-              'assets/heart.json',
-              width: 80,
-              repeat: true,
-            ),
+          // Tela 3: Relação com Engenharia de Sistemas
+          Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Engenharia de Sistemas na prática',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple)),
+                        Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            lottie.Lottie.asset('assets/systems.json', height: 350),
+                            const SizedBox(height: 12),
+                            _item("📐 Modelagem de sistemas (ex: estrutura do app, estados, rotas)"),
+                            _item("🧠 Programação orientada a objetos (com Widgets e States)"),
+                            _item("🎯 UX e requisitos (foco em usabilidade e interação)"),
+                            _item("📊 Gestão ágil (uso de Git, Jira, Sprints)"),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              _ufmgLogo(),
+            ],
+          ),
+
+          // Tela 4: O que aprendi
+          Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('O que eu aprendi',
+                            style: GoogleFonts.poppins(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 16),
+                        for (var point in learningPoints)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.check_circle, color: Colors.deepPurple),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                    child: Text(point,
+                                        style: GoogleFonts.poppins(fontSize: 16))),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 20),
+                        lottie.Lottie.asset('assets/learning.json', width: 180),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              _ufmgLogo(),
+            ],
+          ),
+
+          // Tela 5: Encerramento
+          Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedTextKit(
+                          animatedTexts: [
+                            TypewriterAnimatedText(
+                              'Fazer apps é transformar problemas em soluções.',
+                              textStyle: GoogleFonts.poppins(
+                                  fontSize: 22, fontWeight: FontWeight.w600),
+                              speed: const Duration(milliseconds: 80),
+                            ),
+                            TypewriterAnimatedText(
+                              'Isso é Engenharia de Sistemas aplicada.',
+                              textStyle: GoogleFonts.poppins(
+                                  fontSize: 22, fontWeight: FontWeight.w600),
+                              speed: const Duration(milliseconds: 80),
+                            ),
+                          ],
+                          totalRepeatCount: 1,
+                        ),
+                        const SizedBox(height: 40),
+                        lottie.Lottie.asset('assets/questions.json', width: 160),
+                        const SizedBox(height: 16),
+                        Text('Dúvidas? Pode perguntar! 🧐',
+                            style: GoogleFonts.poppins(fontSize: 18)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              _ufmgLogo(),
+            ],
           ),
         ],
       ),
