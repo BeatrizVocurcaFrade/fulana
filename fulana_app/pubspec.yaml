@@ -27,12 +27,12 @@
 # flutter_icons:
 #   android: true
 #   ios: true
-#   image_path: "assets/icon-192.png"
-#   image_path_ios: "assets/icon-192.png"
+#   image_path: "assets/Sample3.png"
+#   image_path_ios: "assets/Sample3.png"
 
 # flutter_native_splash:
 #   color: "#FFFFFF"
-#   image: assets/icon-192.png
+#   image: assets/Sample3.png
 #   android: true
 #   ios: true
 #   web: false
@@ -40,7 +40,7 @@
 # flutter:
 #   uses-material-design: true
 #   assets:
-#     - assets/icon-192.png
+#     - assets/Sample3.png
 #     - assets/
 
 name: trabalho_uf_app
@@ -102,11 +102,11 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon-192.png"
-  image_path_ios: "assets/icon-192.png"
+  image_path: "assets/Sample3.png"
+  image_path_ios: "assets/Sample3.png"
 flutter_native_splash:
   color: "#FFFFFF" # Cor de fundo
-  image: assets/icon-192.png # Caminho da imagem do splash
+  image: assets/Sample3.png # Caminho da imagem do splash
   android: true
   ios: true
 # For information on the generic Dart part of this file, see the
