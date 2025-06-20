@@ -102,11 +102,11 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/Sample3.png"
-  image_path_ios: "assets/Sample3.png"
+  image_path: "assets/ico.png"
+  image_path_ios: "assets/ico.png"
 flutter_native_splash:
   color: "#FFFFFF" 
-  image: assets/Sample3.png 
+  image: assets/ico.png 
   android: true
   ios: true
 
