@@ -47,7 +47,7 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
       );
 
   Widget _ufmgLogo() => Positioned(
-        bottom: 40,
+        top: 40,
         right: 40,
         child: Image.asset(
           'assets/Sample3.png',
@@ -139,15 +139,16 @@ class _PresentationHomePageState extends State<PresentationHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Engenharia de Sistemas na prática',
+                  
+                        Column(   crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            lottie.Lottie.asset('assets/systems.json', width: 450),
+                                  Text('Engenharia de Sistemas na prática',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.deepPurple)),
-                        Column(   crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            lottie.Lottie.asset('assets/systems.json', width: 450),
                             const SizedBox(height: 12),
                             _item("📐 Modelagem de sistemas (ex: estrutura do app, estados, rotas)"),
                             _item("🧠 Programação orientada a objetos (com Widgets e States)"),
