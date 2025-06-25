@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.trabalho_uf_app">
+    package="com.example.SAP_ASSEMBLY">
 
     <application
-        android:label="trabalho_uf_app"
+        android:label="SAP_ASSEMBLY"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"> <!-- Adicionado aqui -->

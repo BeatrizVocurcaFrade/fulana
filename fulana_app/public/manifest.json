@@ -1,6 +1,6 @@
 {
-    "name": "trabalho_uf_app",
-    "short_name": "trabalho_uf_app",
+    "name": "SAP_ASSEMBLY",
+    "short_name": "SAP_ASSEMBLY",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

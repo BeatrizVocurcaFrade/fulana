@@ -1,4 +1,4 @@
-package com.example.trabalho_uf_app
+package com.example.SAP_ASSEMBLY
 
 import io.flutter.embedding.android.FlutterActivity
 
