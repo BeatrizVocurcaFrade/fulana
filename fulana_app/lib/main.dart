@@ -832,11 +832,12 @@ class _SAPHomePageState extends State<SAPHomePage> {
                         child:Text(
                         "Val: ${_memory[index].toString()}",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: isHighlighted ? Colors.blue.shade900 : Colors.deepPurple.shade800,
                         ),
                       ),),
+                      SizedBox(height: 4,)
                     ],
                   ),
                 );
@@ -954,7 +955,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    Expanded(
+                                    Flexible(
                                       child: ElevatedButton.icon(
                                         onPressed: _compileCode,
                                         icon: const Icon(Icons.code),
@@ -962,7 +963,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                       ),
                                     ),
                                     const SizedBox(width: 10),
-                                    Expanded(
+                                    Flexible(
                                       child: ElevatedButton.icon(
                                         onPressed: _isHalted || _pc >= _compiledInstructions.length
                                             ? null
@@ -977,7 +978,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
-                                    Expanded(
+                                    Flexible(
                                       child: OutlinedButton.icon(
                                         onPressed: _reset,
                                         icon: const Icon(Icons.refresh),
@@ -985,7 +986,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                       ),
                                     ),
                                     const SizedBox(width: 10),
-                                    Expanded(
+                                    Flexible(
                                       child: ElevatedButton.icon(
                                         onPressed: _isHalted || _pc >= _compiledInstructions.length
                                             ? null
