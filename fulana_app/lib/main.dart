@@ -689,7 +689,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 ),
                   IconButton(
             onPressed: _showInfoDialo2,
-            icon:  Icon(Icons.info_outline,color: Colors.teal.shade400 ,),
+            icon:  Icon(Icons.help_outline,color: Colors.teal.shade400 ,),
             tooltip: 'Sobre o Simulador',
           ),
               ],
@@ -905,7 +905,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
         actions: [
           IconButton(
             onPressed: _showInfoDialog,
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.help_outline),
             tooltip: 'Sobre o Simulador',
           ),
         ],
@@ -952,51 +952,44 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Flexible(
-                                      child: ElevatedButton.icon(
-                                        onPressed: _compileCode,
-                                        icon: const Icon(Icons.code),
-                                        label: const Text('Compilar', style: TextStyle(fontSize: 16)),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Flexible(
-                                      child: ElevatedButton.icon(
-                                        onPressed: _isHalted || _pc >= _compiledInstructions.length
-                                            ? null
-                                            : _executeStep,
-                                        icon: const Icon(Icons.skip_next),
-                                        label: const Text('Próximo Passo', style: TextStyle(fontSize: 16)),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Flexible(
-                                      child: OutlinedButton.icon(
-                                        onPressed: _reset,
-                                        icon: const Icon(Icons.refresh),
-                                        label: const Text('Resetar', style: TextStyle(fontSize: 16)),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Flexible(
-                                      child: ElevatedButton.icon(
-                                        onPressed: _isHalted || _pc >= _compiledInstructions.length
-                                            ? null
-                                            : _toggleRun,
-                                        icon: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
-                                        label: Text(_isRunning ? 'Pausar' : 'Executar', style: TextStyle(fontSize: 16)),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              GridView.count(
+      shrinkWrap: true, // Isso permite que o GridView seja ajustado conforme o tamanho do conteúdo
+      physics: const NeverScrollableScrollPhysics(), // Impede que o GridView seja rolável, já que temos o SingleChildScrollView
+      crossAxisCount: MediaQuery.of(context).size.width > 600 ? 2 : 1, // Duas colunas para telas grandes, 1 coluna para telas pequenas
+      crossAxisSpacing: 12, // Espaço entre os itens horizontal
+      mainAxisSpacing: 12, // Espaço entre os itens vertical
+      childAspectRatio: 3.5, // Ajuste este valor para controlar a proporção largura/altura de cada item (botão)
+      children: [
+        ElevatedButton.icon(
+          onPressed: _compileCode,
+          icon: const Icon(Icons.build),
+          label: const Text('Compilar', style: TextStyle(fontSize: 16)),
+        ),
+        ElevatedButton.icon(
+          onPressed: _isHalted || _pc >= _compiledInstructions.length
+              ? null
+              : _executeStep,
+          icon: const Icon(Icons.play_arrow),
+          label: const Text('Próximo Passo', style: TextStyle(fontSize: 16)),
+        ),
+        OutlinedButton.icon(
+          onPressed: _reset,
+          icon: const Icon(Icons.replay),
+          label: const Text('Resetar', style: TextStyle(fontSize: 16)),
+        ),
+        ElevatedButton.icon(
+          onPressed: _isHalted || _pc >= _compiledInstructions.length
+              ? null
+              : _toggleRun,
+          icon: Icon(_isRunning ? Icons.pause : Icons.play_circle),
+          label: Text(
+            _isRunning ? 'Pausar' : 'Executar',
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+      ],
+    )
+
                               ],
                             ),
                           ),
