@@ -24,10 +24,11 @@ class SAPSimulatorApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.teal.shade700, // AppBar color
           foregroundColor: Colors.white, // AppBar title/icon color
+          
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple.shade600, // Button background
+            backgroundColor:   Colors.teal.shade400,  // Button background
             foregroundColor: Colors.white, // Button text/icon color
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Rounded buttons
@@ -1240,7 +1241,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Theme.of(context).colorScheme.primary, // Using primary color for BottomAppBar
+        color:    Colors.teal.shade700,  // Using primary color for BottomAppBar
         shape: const CircularNotchedRectangle(), // Adds a notch if you use a FloatingActionButton
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
