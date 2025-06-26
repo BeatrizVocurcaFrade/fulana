@@ -61,10 +61,141 @@ class SAPSimulatorApp extends StatelessWidget {
           filled: true,
         ),
       ),
-      home: const SAPHomePage(),
+      // Starts with the SplashScreen
+      home: const SplashScreen(),
     );
   }
 }
+
+// New SplashScreen Widget
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // No automatic navigation here, user clicks "Iniciar"
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.teal, Colors.deepPurple],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // You can replace this with an actual logo or animation
+                Icon(
+                  Icons.computer,
+                  size: 100,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'SAP Microcontroller Simulator',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.sourceCodePro(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    'Simulando o cérebro de um computador',
+                    style: GoogleFonts.sourceCodePro(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 50),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const SAPHomePage()),
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.transparent), // Torna o fundo do ElevatedButton transparente
+                    shadowColor: WidgetStateProperty.all(Colors.transparent), // Remove a sombra
+                    overlayColor: WidgetStateProperty.all(Colors.white.withOpacity(0.2)), // Efeito de toque
+                  ),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.teal.shade400, Colors.deepPurple.shade400], // Cores do gradiente mais sutis para o botão
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      constraints: const BoxConstraints(minWidth: 150), // Garante uma largura mínima
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Iniciar',
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class ParsedInstruction {
+  final String opcode;
+  final int? operand; // Can be null for instructions like OUT, HLT
+
+  ParsedInstruction(this.opcode, this.operand);
+
+  @override
+  String toString() {
+    return operand != null ? "$opcode $operand" : opcode;
+  }
+}
+
 
 class SAPHomePage extends StatefulWidget {
   const SAPHomePage({super.key});
@@ -77,17 +208,20 @@ class _SAPHomePageState extends State<SAPHomePage> {
   // --- SAP Microcontroller State Variables ---
   int _pc = 0; // Program Counter
   int _acc = 0; // Accumulator
-  int _mar=0; // Memory Address Register
-  String _currentInstruction='';
-  int _mdr=0; // Memory Data Register
-  int _out=0; // Output Register
+  int _mar= 0; // Memory Address Register
+  int _mdr= 0; // Memory Data Register
+  int _out= 0; // Output Register
   final List<int> _memory = List.generate(16, (index) => 0); // 16 memory locations, 0-15
   bool _carryFlag = false; // Carry Flag
   bool _zeroFlag = false; // Zero Flag
   bool _isRunning = false; // Controls continuous execution
   final List<String> _logMessages = []; // For output console
+  String _currentInstruction = ''; // To display in IR
 
   // --- UI State Variables ---
+  bool _isCompiling = false; // New state for compile button loading
+  bool _isResetting = false; // New state for reset button loading
+
   final TextEditingController _editorController = TextEditingController(
     text: "// Exemplo de Código Assembly SAP\n"
           "LDA 14   // Carrega o conteúdo da posição de memória 14 para o ACC\n"
@@ -130,12 +264,12 @@ class _SAPHomePageState extends State<SAPHomePage> {
     super.dispose();
   }
 
-
   // --- Simulation Control Functions ---
 
   // Compiles the assembly code from the editor
   void _compileCode() {
     setState(() {
+      _isCompiling = true; // Set compiling state to true
       _isRunning = false; // Stop any ongoing execution
       _compiledInstructions.clear();
       _logMessages.clear();
@@ -150,6 +284,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
       _highlightedMemoryAddress = null;
       _carryFlag = false;
       _zeroFlag = false;
+      _currentInstruction = ''; // Clear IR display
 
       // Reset memory to initial example values or 0
       for (int i = 0; i < _memory.length; i++) {
@@ -159,7 +294,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
       _memory[15] = 3;
 
       final List<String> lines = _editorController.text.split('\n');
-      int instructionCount = 0;
+      int instructionParseIndex = 0; // Tracks where instructions end and data begins
 
       for (int i = 0; i < lines.length; i++) {
         String line = lines[i].trim();
@@ -179,74 +314,80 @@ class _SAPHomePageState extends State<SAPHomePage> {
         String opcode = parts[0].toUpperCase();
         int? operand;
 
-        if (parts.length > 1) {
-          try {
-            operand = int.parse(parts[1]);
-          } catch (e) {
-            _showErrorDialog("Erro de compilação na linha ${i + 1}: Operando inválido '$parts[1]'.");
-            _reset();
-            return;
-          }
-          if (operand < 0 || operand >= _memory.length) {
-            _showErrorDialog("Erro de compilação na linha ${i + 1}: Endereço de memória '$operand' fora do intervalo (0-${_memory.length - 1}).");
-            _reset();
-            return;
-          }
-        }
-
-        // Validate opcode
+        bool isInstruction = true;
         switch (opcode) {
           case 'LDA':
           case 'ADD':
           case 'SUB':
           case 'STA':
           case 'JMP':
-            if (operand == null) {
-              _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução '$opcode' requer um operando de endereço.");
+            if (parts.length < 2) {
+              _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução '$opcode' requer um operando.");
+              _reset();
+              return;
+            }
+            try {
+              operand = int.parse(parts[1]);
+            } catch (e) {
+              _showErrorDialog("Erro de compilação na linha ${i + 1}: Operando inválido '$parts[1]' para '$opcode'.");
+              _reset();
+              return;
+            }
+            if (operand < 0 || operand >= _memory.length) {
+              _showErrorDialog("Erro de compilação na linha ${i + 1}: Endereço de memória '$operand' fora do intervalo (0-${_memory.length - 1}).");
               _reset();
               return;
             }
             break;
           case 'OUT':
           case 'HLT':
-            if (operand != null) {
+            if (parts.length > 1) {
               _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução '$opcode' não deve ter um operando.");
               _reset();
               return;
             }
             break;
           default:
-            // If it's not a known instruction, it might be data for memory
-            // We assume instructions come first, then data.
-            // If instructionCount is 0, it means we are parsing memory values from the start
-            // Otherwise, we consider it an instruction error if it's unexpected
-            if (instructionCount < lines.length) { // Try to assign to memory if it's a number
-              try {
-                int dataValue = int.parse(line);
-                if (instructionCount < _memory.length) {
-                  _memory[instructionCount] = dataValue;
-                } else {
-                  _showErrorDialog("Erro de compilação na linha ${i + 1}: Excesso de dados para a memória ou instrução desconhecida '$line'.");
-                  _reset();
-                  return;
-                }
-              } catch (e) {
-                _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução ou dado desconhecido '$line'.");
-                _reset();
-                return;
-              }
-            }
-            instructionCount++; // Increment count even if it's an error, to avoid infinite loop
-            continue; // Skip to next line if it's data
+            isInstruction = false; // Not a recognized instruction opcode
+            break;
         }
-        _compiledInstructions.add(ParsedInstruction(opcode, operand));
-        instructionCount++;
+
+        if (isInstruction) {
+          _compiledInstructions.add(ParsedInstruction(opcode, operand));
+          instructionParseIndex++;
+        } else {
+          // Attempt to parse as data for memory
+          try {
+            int dataValue = int.parse(line);
+            // Only add data if it fits within the memory bounds and after instructions
+            if (instructionParseIndex < _memory.length) {
+              _memory[instructionParseIndex] = dataValue;
+              instructionParseIndex++; // Increment to next memory location
+            } else {
+              _showErrorDialog("Erro de compilação na linha ${i + 1}: Excesso de dados para a memória ou instrução desconhecida '$line'.");
+              _reset();
+              return;
+            }
+          } catch (e) {
+            _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução ou dado desconhecido '$line'.");
+            _reset();
+            return;
+          }
+        }
       }
 
       if (_compiledInstructions.isEmpty) {
         _showErrorDialog("Por favor, insira pelo menos uma instrução válida no código.");
         _reset();
         return;
+      }
+    });
+    // Simulates compilation time
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) { // Check if the widget is still mounted before calling setState
+        setState(() {
+          _isCompiling = false; // Restore state after delay
+        });
       }
     });
   }
@@ -423,6 +564,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
   // Resets the simulation to its initial state
   void _reset() {
     setState(() {
+      _isResetting = true; // Set resetting state to true
       _isRunning = false;
       _pc = 0;
       _acc = 0;
@@ -436,6 +578,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
       _highlightedMemoryAddress = null;
       _carryFlag = false;
       _zeroFlag = false;
+      _currentInstruction = ''; // Clear IR display
 
       // Reset memory to initial example values or 0
       for (int i = 0; i < _memory.length; i++) {
@@ -445,6 +588,14 @@ class _SAPHomePageState extends State<SAPHomePage> {
       _memory[15] = 3;
     });
     _log("Simulação Resetada.");
+    // Simulates reset time
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) { // Check if the widget is still mounted
+        setState(() {
+          _isResetting = false; // Restore state after delay
+        });
+      }
+    });
   }
 
   // Toggles the continuous run mode
@@ -490,16 +641,16 @@ class _SAPHomePageState extends State<SAPHomePage> {
       ),
     );
   }
- // Shows information about the simulator
-  void _showInfoDialo2() {
+
+  // Shows information about the functional blocks
+  void _showInfoDialogBlocks() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Sobre o Blocos funcionais'),
+        title: const Text('Sobre os Blocos Funcionais'),
         content: const SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-          
               Text(
                 'Blocos Funcionais:',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -515,8 +666,6 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 '- Flags (C/Z): Indicam Carry (transbordo) e Zero (resultado zero).',
                 style: TextStyle(fontSize: 14),
               ),
-            
-              
             ],
           ),
         ),
@@ -531,8 +680,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
       ),
     );
   }
-  // Shows information about the simulator
-  void _showInfoDialog() {
+
+  // Shows information about the simulator and instructions
+  void _showInfoDialogAbout() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -546,8 +696,6 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 style: TextStyle(fontSize: 14),
               ),
               SizedBox(height: 10),
-            
-             
               Text(
                 'Instruções Suportadas:',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -605,7 +753,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
   }
 
   // Widget for a single functional block (PC, IR, ACC, etc.)
-  Widget _sAPBlock(String name, {String? value, String? imagePath, String? blockId}) {
+  Widget _sapBlock(String name, {String? value, String? imagePath, String? blockId}) {
     final isActive = _highlightedBlock == blockId;
     return Card(
       color: isActive ? Colors.amber.shade100 : Colors.white,
@@ -687,11 +835,11 @@ class _SAPHomePageState extends State<SAPHomePage> {
                     ),
                   ),
                 ),
-                  IconButton(
-            onPressed: _showInfoDialo2,
-            icon:  Icon(Icons.help_outline,color: Colors.teal.shade400 ,),
-            tooltip: 'Sobre o Simulador',
-          ),
+                IconButton(
+                  onPressed: _showInfoDialogBlocks,
+                  icon: Icon(Icons.help_outline, color: Colors.teal.shade400),
+                  tooltip: 'Sobre os Blocos Funcionais',
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -699,10 +847,10 @@ class _SAPHomePageState extends State<SAPHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: _sAPBlock("PC", value: _pc.toString(), imagePath: 'assets/pc.png', blockId: 'PC')),
-                Expanded(child: _sAPBlock("IR", value: _currentInstruction, imagePath: 'assets/ir.png', blockId: 'IR')),
-                Expanded(child: _sAPBlock("MAR", value: _mar.toString() =='0'?  "-":_mar.toString(), blockId: 'MAR')),
-                Expanded(child: _sAPBlock("MDR", value: _mdr.toString() =='0'? "-":_mdr.toString(), blockId: 'MDR')),
+                Expanded(child: _sapBlock("PC", value: _pc.toString(), imagePath: 'assets/pc.png', blockId: 'PC')),
+                Expanded(child: _sapBlock("IR", value: _currentInstruction, imagePath: 'assets/ir.png', blockId: 'IR')),
+                Expanded(child: _sapBlock("MAR", value: _mar.toString().isEmpty? "-":_mar.toString(), blockId: 'MAR')),
+                Expanded(child: _sapBlock("MDR", value: _mdr.toString() .isEmpty? "-":_mdr.toString(), blockId: 'MDR')),
               ],
             ),
             const SizedBox(height: 20),
@@ -710,9 +858,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: _sAPBlock("ACC", value: _acc.toString(), imagePath: 'assets/ac.png', blockId: 'ACC')),
-                Expanded(child: _sAPBlock("ULA", imagePath: 'assets/ula.png', blockId: 'ULA')),
-                Expanded(child: _sAPBlock("OUT", value: _out.toString()=='0'?  "-": _out.toString(), blockId: 'OUT')),
+                Expanded(child: _sapBlock("ACC", value: _acc.toString(), imagePath: 'assets/ac.png', blockId: 'ACC')),
+                Expanded(child: _sapBlock("ULA", imagePath: 'assets/ula.png', blockId: 'ULA')),
+                Expanded(child: _sapBlock("OUT", value: _out.toString() .isEmpty? "-": _out.toString(), blockId: 'OUT')),
                 Expanded(
                   child: Card(
                     color: Colors.white,
@@ -752,12 +900,13 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                   color: _carryFlag ? Colors.red.shade700 : Colors.grey.shade600,
                                 )),
                               ),
-                            Flexible(
-                                child:  Text("Z: ${_zeroFlag ? '1' : '0'}", style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: _zeroFlag ? Colors.red.shade700 : Colors.grey.shade600,
-                              ))),
+                              Flexible(
+                                child: Text("Z: ${_zeroFlag ? '1' : '0'}", style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: _zeroFlag ? Colors.red.shade700 : Colors.grey.shade600,
+                                )),
+                              ),
                             ],
                           ),
                         ],
@@ -828,16 +977,17 @@ class _SAPHomePageState extends State<SAPHomePage> {
                           ),
                         ),
                       ),
-                       Flexible(
-                        child:Text(
-                        "Val: ${_memory[index].toString()}",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: isHighlighted ? Colors.blue.shade900 : Colors.deepPurple.shade800,
+                      Flexible(
+                        child: Text(
+                          "Val: ${_memory[index].toString()}",
+                          style: TextStyle(
+                            fontSize: 16, // Increased font size for better readability
+                            fontWeight: FontWeight.bold,
+                            color: isHighlighted ? Colors.blue.shade900 : Colors.deepPurple.shade800,
+                          ),
                         ),
-                      ),),
-                      SizedBox(height: 4,)
+                      ),
+                      const SizedBox(height: 4)
                     ],
                   ),
                 );
@@ -901,263 +1051,274 @@ class _SAPHomePageState extends State<SAPHomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('SAP Microcontroller'),
+        title: const Text('SAP Microcontroller Simulator'),
         actions: [
           IconButton(
-            onPressed: _showInfoDialog,
-            icon: const Icon(Icons.help_outline),
+            onPressed: _showInfoDialogAbout,
+            icon: const Icon(Icons.info_outline),
             tooltip: 'Sobre o Simulador',
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Adjust layout based on screen width
-          if (constraints.maxWidth > 800) {
-            // Desktop/Tablet view (two columns)
-            return Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Card(
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Editor de Código Assembly",
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.teal.shade700,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                TextField(
-                                  controller: _editorController,
-                                  maxLines: 15,
-                                  minLines: 10,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Assembly Code',
-                                    hintText: 'Digite seu código Assembly aqui...',
-                                  ),
-                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontFamily: 'SourceCodePro',
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                              GridView.count(
-      shrinkWrap: true, // Isso permite que o GridView seja ajustado conforme o tamanho do conteúdo
-      physics: const NeverScrollableScrollPhysics(), // Impede que o GridView seja rolável, já que temos o SingleChildScrollView
-      crossAxisCount: MediaQuery.of(context).size.width > 600 ? 2 : 1, // Duas colunas para telas grandes, 1 coluna para telas pequenas
-      crossAxisSpacing: 12, // Espaço entre os itens horizontal
-      mainAxisSpacing: 12, // Espaço entre os itens vertical
-      childAspectRatio: 3.5, // Ajuste este valor para controlar a proporção largura/altura de cada item (botão)
-      children: [
-        ElevatedButton.icon(
-          onPressed: _compileCode,
-          icon: const Icon(Icons.build),
-          label: const Text('Compilar', style: TextStyle(fontSize: 16)),
-        ),
-        ElevatedButton.icon(
-          onPressed: _isHalted || _pc >= _compiledInstructions.length
-              ? null
-              : _executeStep,
-          icon: const Icon(Icons.play_arrow),
-          label: const Text('Próximo Passo', style: TextStyle(fontSize: 16)),
-        ),
-        OutlinedButton.icon(
-          onPressed: _reset,
-          icon: const Icon(Icons.replay),
-          label: const Text('Resetar', style: TextStyle(fontSize: 16)),
-        ),
-        ElevatedButton.icon(
-          onPressed: _isHalted || _pc >= _compiledInstructions.length
-              ? null
-              : _toggleRun,
-          icon: Icon(_isRunning ? Icons.pause : Icons.play_circle),
-          label: Text(
-            _isRunning ? 'Pausar' : 'Executar',
-            style: const TextStyle(fontSize: 16),
+      body: Container(
+        // Apply a subtle gradient background to the entire body
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey.shade50, Colors.teal.shade50],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
-      ],
-    )
-
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Instruções Compiladas",
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.teal.shade700,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _compiledInstructions.length,
-                                    itemBuilder: (context, index) => _buildInstructionLine(_compiledInstructions[index], index),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        _outputConsole(),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        _datapathView(),
-                        _memoryView(),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            // Mobile view (single column)
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Adjust layout based on screen width
+            if (constraints.maxWidth > 800) {
+              // Desktop/Tablet view (two columns)
+              return Row(
                 children: [
-                  Card(
-                    margin: EdgeInsets.zero,
-                    child: Padding(
+                  Expanded(
+                    flex: 2,
+                    child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            "Editor de Código Assembly",
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Colors.teal.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: _editorController,
-                            maxLines: 10,
-                            minLines: 6,
-                            decoration: const InputDecoration(
-                              labelText: 'Assembly Code',
-                              hintText: 'Digite seu código Assembly aqui...',
-                            ),
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontFamily: 'SourceCodePro',
+                          Card(
+                            margin: EdgeInsets.zero,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Editor de Código Assembly",
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: Colors.teal.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: _editorController,
+                                    maxLines: 15,
+                                    minLines: 10,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Assembly Code',
+                                      hintText: 'Digite seu código Assembly aqui...',
+                                    ),
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontFamily: 'SourceCodePro',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // Removed the GridView.count from here
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: _compileCode,
-                                icon: const Icon(Icons.code),
-                                label: const Text('Compilar', style: TextStyle(fontSize: 14)),
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Instruções Compiladas",
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: Colors.teal.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: _compiledInstructions.length,
+                                      itemBuilder: (context, index) => _buildInstructionLine(_compiledInstructions[index], index),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              ElevatedButton.icon(
-                                onPressed: _isHalted || _pc >= _compiledInstructions.length
-                                    ? null
-                                    : _executeStep,
-                                icon: const Icon(Icons.skip_next),
-                                label: const Text('Próximo Passo', style: TextStyle(fontSize: 14)),
-                              ),
-                              OutlinedButton.icon(
-                                onPressed: _reset,
-                                icon: const Icon(Icons.refresh),
-                                label: const Text('Resetar', style: TextStyle(fontSize: 14)),
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: _isHalted || _pc >= _compiledInstructions.length
-                                    ? null
-                                    : _toggleRun,
-                                icon: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
-                                label: Text(_isRunning ? 'Pausar' : 'Executar', style: TextStyle(fontSize: 14)),
-                              ),
-                            ],
+                            ),
                           ),
+                          _outputConsole(),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Card(
-                    child: Padding(
+                  Expanded(
+                    flex: 3,
+                    child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Instruções Compiladas",
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Colors.teal.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: _compiledInstructions.length,
-                              itemBuilder: (context, index) => _buildInstructionLine(_compiledInstructions[index], index),
-                            ),
-                          ),
+                          _datapathView(),
+                          _memoryView(),
                         ],
                       ),
                     ),
                   ),
-                  _datapathView(),
-                  _memoryView(),
-                  _outputConsole(),
                 ],
+              );
+            } else {
+              // Mobile view (single column)
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Editor de Código Assembly",
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.teal.shade700,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextField(
+                              controller: _editorController,
+                              maxLines: 10,
+                              minLines: 6,
+                              decoration: const InputDecoration(
+                                labelText: 'Assembly Code',
+                                hintText: 'Digite seu código Assembly aqui...',
+                              ),
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                fontFamily: 'SourceCodePro',
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            // Removed the GridView.count from here
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Instruções Compiladas",
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.teal.shade700,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _compiledInstructions.length,
+                                itemBuilder: (context, index) => _buildInstructionLine(_compiledInstructions[index], index),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    _datapathView(),
+                    _memoryView(),
+                    _outputConsole(),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Theme.of(context).colorScheme.primary, // Using primary color for BottomAppBar
+        shape: const CircularNotchedRectangle(), // Adds a notch if you use a FloatingActionButton
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Compilar Button
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ElevatedButton.icon(
+                    onPressed: _isCompiling ? null : _compileCode,
+                    icon: _isCompiling
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : const Icon(Icons.build),
+                    label: Text(
+                      _isCompiling ? 'Compilando...' : 'Compilar',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
               ),
-            );
-          }
-        },
+              // Próximo Passo Button
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ElevatedButton.icon(
+                    onPressed: _isHalted || _pc >= _compiledInstructions.length || _isRunning || _isCompiling || _isResetting
+                        ? null
+                        : _executeStep,
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text('Próximo Passo', style: TextStyle(fontSize: 14)),
+                  ),
+                ),
+              ),
+              // Resetar Button
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: OutlinedButton.icon(
+                    onPressed: _isResetting || _isCompiling ? null : _reset,
+                    icon: _isResetting
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : const Icon(Icons.replay),
+                    label: Text(
+                      _isResetting ? 'Resetando...' : 'Resetar',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: _isResetting || _isCompiling ? Colors.grey : Colors.white, // Change border color when disabled
+                        width: 2,
+                      ),
+                      foregroundColor: _isResetting || _isCompiling ? Colors.grey : Colors.white, // Change text color when disabled
+                    ),
+                  ),
+                ),
+              ),
+              // Executar/Pausar Button
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ElevatedButton.icon(
+                    onPressed: _isHalted || _pc >= _compiledInstructions.length || _isCompiling || _isResetting
+                        ? null
+                        : _toggleRun,
+                    icon: Icon(_isRunning ? Icons.pause : Icons.play_circle),
+                    label: Text(
+                      _isRunning ? 'Pausar' : 'Executar',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-  // Represents a parsed assembly instruction
-  class ParsedInstruction {
-    final String opcode;
-    final int? operand; // Can be null for instructions like OUT, HLT
-
-    ParsedInstruction(this.opcode, this.operand);
-
-    @override
-    String toString() {
-      return operand != null ? "$opcode $operand" : opcode;
-    }
-  }
