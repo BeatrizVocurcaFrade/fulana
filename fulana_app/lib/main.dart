@@ -11,27 +11,30 @@ class SAPSimulatorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'SAP Microcontroller Simulator',
+      title: 'SAP Microcontroller',
       theme: ThemeData(
         // Using a distinct seed color for a fresh look
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal.shade700),
         // Applying a monospace font for code readability
-        textTheme: GoogleFonts.sourceCodeProTextTheme(Theme.of(context).textTheme).apply(
-          bodyColor: Colors.deepPurple.shade900, // Darker text for better contrast
+        textTheme:
+            GoogleFonts.sourceCodeProTextTheme(Theme.of(context).textTheme)
+                .apply(
+          bodyColor:
+              Colors.deepPurple.shade900, // Darker text for better contrast
           displayColor: Colors.deepPurple.shade900,
         ),
         scaffoldBackgroundColor: Colors.grey.shade50, // Light grey background
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.teal.shade700, // AppBar color
           foregroundColor: Colors.white, // AppBar title/icon color
-          
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor:   Colors.teal.shade400,  // Button background
+            backgroundColor: Colors.teal.shade400, // Button background
             foregroundColor: Colors.white, // Button text/icon color
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Rounded buttons
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)), // Rounded buttons
             elevation: 5, // Shadow effect
           ),
         ),
@@ -40,12 +43,14 @@ class SAPSimulatorApp extends StatelessWidget {
             foregroundColor: Colors.deepPurple.shade600,
             side: BorderSide(color: Colors.deepPurple.shade600, width: 2),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         cardTheme: CardTheme(
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
@@ -126,7 +131,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 const SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10),
                   child: Text(
                     textAlign: TextAlign.center,
                     'Simulando o cérebro de um computador',
@@ -140,18 +146,25 @@ class _SplashScreenState extends State<SplashScreen> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const SAPHomePage()),
+                      MaterialPageRoute(
+                          builder: (context) => const SAPHomePage()),
                     );
                   },
                   style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(Colors.transparent), // Torna o fundo do ElevatedButton transparente
-                    shadowColor: WidgetStateProperty.all(Colors.transparent), // Remove a sombra
-                    overlayColor: WidgetStateProperty.all(Colors.white.withOpacity(0.2)), // Efeito de toque
+                    backgroundColor: WidgetStateProperty.all(Colors
+                        .transparent), // Torna o fundo do ElevatedButton transparente
+                    shadowColor: WidgetStateProperty.all(
+                        Colors.transparent), // Remove a sombra
+                    overlayColor: WidgetStateProperty.all(
+                        Colors.white.withOpacity(0.2)), // Efeito de toque
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.teal.shade400, Colors.deepPurple.shade400], // Cores do gradiente mais sutis para o botão
+                        colors: [
+                          Colors.teal.shade400,
+                          Colors.deepPurple.shade400
+                        ], // Cores do gradiente mais sutis para o botão
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -165,12 +178,17 @@ class _SplashScreenState extends State<SplashScreen> {
                       ],
                     ),
                     child: Container(
-                      constraints: const BoxConstraints(minWidth: 150), // Garante uma largura mínima
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      constraints: const BoxConstraints(
+                          minWidth: 150), // Garante uma largura mínima
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 24),
                       alignment: Alignment.center,
                       child: const Text(
                         'Iniciar',
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -184,7 +202,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-
 class ParsedInstruction {
   final String opcode;
   final int? operand; // Can be null for instructions like OUT, HLT
@@ -197,7 +214,6 @@ class ParsedInstruction {
   }
 }
 
-
 class SAPHomePage extends StatefulWidget {
   const SAPHomePage({super.key});
 
@@ -209,10 +225,11 @@ class _SAPHomePageState extends State<SAPHomePage> {
   // --- SAP Microcontroller State Variables ---
   int _pc = 0; // Program Counter
   int _acc = 0; // Accumulator
-  int _mar= 0; // Memory Address Register
-  int _mdr= 0; // Memory Data Register
-  int _out= 0; // Output Register
-  final List<int> _memory = List.generate(16, (index) => 0); // 16 memory locations, 0-15
+  int _mar = 0; // Memory Address Register
+  int _mdr = 0; // Memory Data Register
+  int _out = 0; // Output Register
+  final List<int> _memory =
+      List.generate(16, (index) => 0); // 16 memory locations, 0-15
   bool _carryFlag = false; // Carry Flag
   bool _zeroFlag = false; // Zero Flag
   bool _isRunning = false; // Controls continuous execution
@@ -224,7 +241,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
   bool _isResetting = false; // New state for reset button loading
 
   final TextEditingController _editorController = TextEditingController(
-    text: "// Exemplo de Código Assembly SAP\n"
+      text: "// Exemplo de Código Assembly SAP\n"
           "LDA 14   // Carrega o conteúdo da posição de memória 14 para o ACC\n"
           "ADD 15   // Adiciona o conteúdo da posição de memória 15 ao ACC\n"
           "STA 0    // Armazena o conteúdo do ACC na posição de memória 0\n"
@@ -242,7 +259,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
           "0\n" // Memória 13
           "5\n" // Memória 14 (valor inicial)
           "3\n" // Memória 15 (valor inicial)
-  );
+      );
 
   final List<ParsedInstruction> _compiledInstructions = [];
   int _highlightedInstructionIndex = -1; // -1 means no instruction highlighted
@@ -295,7 +312,8 @@ class _SAPHomePageState extends State<SAPHomePage> {
       _memory[15] = 3;
 
       final List<String> lines = _editorController.text.split('\n');
-      int instructionParseIndex = 0; // Tracks where instructions end and data begins
+      int instructionParseIndex =
+          0; // Tracks where instructions end and data begins
 
       for (int i = 0; i < lines.length; i++) {
         String line = lines[i].trim();
@@ -308,9 +326,11 @@ class _SAPHomePageState extends State<SAPHomePage> {
           line = line.substring(0, line.indexOf('//')).trim();
         }
 
-        List<String> parts = line.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
+        List<String> parts =
+            line.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
 
-        if (parts.isEmpty) continue; // Skip if only comments or empty after stripping
+        if (parts.isEmpty)
+          continue; // Skip if only comments or empty after stripping
 
         String opcode = parts[0].toUpperCase();
         int? operand;
@@ -323,19 +343,22 @@ class _SAPHomePageState extends State<SAPHomePage> {
           case 'STA':
           case 'JMP':
             if (parts.length < 2) {
-              _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução '$opcode' requer um operando.");
+              _showErrorDialog(
+                  "Erro de compilação na linha ${i + 1}: Instrução '$opcode' requer um operando.");
               _reset();
               return;
             }
             try {
               operand = int.parse(parts[1]);
             } catch (e) {
-              _showErrorDialog("Erro de compilação na linha ${i + 1}: Operando inválido '$parts[1]' para '$opcode'.");
+              _showErrorDialog(
+                  "Erro de compilação na linha ${i + 1}: Operando inválido '$parts[1]' para '$opcode'.");
               _reset();
               return;
             }
             if (operand < 0 || operand >= _memory.length) {
-              _showErrorDialog("Erro de compilação na linha ${i + 1}: Endereço de memória '$operand' fora do intervalo (0-${_memory.length - 1}).");
+              _showErrorDialog(
+                  "Erro de compilação na linha ${i + 1}: Endereço de memória '$operand' fora do intervalo (0-${_memory.length - 1}).");
               _reset();
               return;
             }
@@ -343,7 +366,8 @@ class _SAPHomePageState extends State<SAPHomePage> {
           case 'OUT':
           case 'HLT':
             if (parts.length > 1) {
-              _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução '$opcode' não deve ter um operando.");
+              _showErrorDialog(
+                  "Erro de compilação na linha ${i + 1}: Instrução '$opcode' não deve ter um operando.");
               _reset();
               return;
             }
@@ -365,12 +389,14 @@ class _SAPHomePageState extends State<SAPHomePage> {
               _memory[instructionParseIndex] = dataValue;
               instructionParseIndex++; // Increment to next memory location
             } else {
-              _showErrorDialog("Erro de compilação na linha ${i + 1}: Excesso de dados para a memória ou instrução desconhecida '$line'.");
+              _showErrorDialog(
+                  "Erro de compilação na linha ${i + 1}: Excesso de dados para a memória ou instrução desconhecida '$line'.");
               _reset();
               return;
             }
           } catch (e) {
-            _showErrorDialog("Erro de compilação na linha ${i + 1}: Instrução ou dado desconhecido '$line'.");
+            _showErrorDialog(
+                "Erro de compilação na linha ${i + 1}: Instrução ou dado desconhecido '$line'.");
             _reset();
             return;
           }
@@ -378,14 +404,16 @@ class _SAPHomePageState extends State<SAPHomePage> {
       }
 
       if (_compiledInstructions.isEmpty) {
-        _showErrorDialog("Por favor, insira pelo menos uma instrução válida no código.");
+        _showErrorDialog(
+            "Por favor, insira pelo menos uma instrução válida no código.");
         _reset();
         return;
       }
     });
     // Simulates compilation time
     Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) { // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        // Check if the widget is still mounted before calling setState
         setState(() {
           _isCompiling = false; // Restore state after delay
         });
@@ -432,7 +460,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
     switch (currentInstruction.opcode) {
       case 'LDA':
         setState(() {
-          _mar = currentInstruction.operand??0;
+          _mar = currentInstruction.operand ?? 0;
           _highlightedBlock = 'MAR';
           _highlightedMemoryAddress = currentInstruction.operand;
         });
@@ -451,7 +479,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
         break;
       case 'ADD':
         setState(() {
-          _mar = currentInstruction.operand??0;
+          _mar = currentInstruction.operand ?? 0;
           _highlightedBlock = 'MAR';
           _highlightedMemoryAddress = currentInstruction.operand;
         });
@@ -465,14 +493,15 @@ class _SAPHomePageState extends State<SAPHomePage> {
           _highlightedBlock = 'ULA'; // Highlight ALU for operation
           // Simulate carry for positive numbers adding
           int sum = _acc + _mdr;
-          _carryFlag = (sum > 255); // Simple overflow for 8-bit, just for demonstration
+          _carryFlag =
+              (sum > 255); // Simple overflow for 8-bit, just for demonstration
           _acc = sum & 0xFF; // Keep within 8-bit range for demo
           _zeroFlag = (_acc == 0);
         });
         break;
       case 'SUB':
         setState(() {
-          _mar = currentInstruction.operand??0;
+          _mar = currentInstruction.operand ?? 0;
           _highlightedBlock = 'MAR';
           _highlightedMemoryAddress = currentInstruction.operand;
         });
@@ -493,7 +522,7 @@ class _SAPHomePageState extends State<SAPHomePage> {
         break;
       case 'STA':
         setState(() {
-          _mar = currentInstruction.operand??0;
+          _mar = currentInstruction.operand ?? 0;
           _highlightedBlock = 'MAR';
           _highlightedMemoryAddress = currentInstruction.operand;
         });
@@ -505,7 +534,8 @@ class _SAPHomePageState extends State<SAPHomePage> {
         await Future.delayed(const Duration(milliseconds: 500));
         setState(() {
           _memory[currentInstruction.operand!] = _mdr;
-          _highlightedBlock = null; // Memory write doesn't have a specific block
+          _highlightedBlock =
+              null; // Memory write doesn't have a specific block
           _highlightedMemoryAddress = currentInstruction.operand;
         });
         break;
@@ -531,7 +561,8 @@ class _SAPHomePageState extends State<SAPHomePage> {
         });
         break;
       default:
-        _showErrorDialog("Instrução inválida encontrada: ${currentInstruction.opcode}");
+        _showErrorDialog(
+            "Instrução inválida encontrada: ${currentInstruction.opcode}");
         _isHalted = true;
         _isRunning = false;
         break;
@@ -552,11 +583,13 @@ class _SAPHomePageState extends State<SAPHomePage> {
     }
 
     if (_isRunning && !_isHalted) {
-      await Future.delayed(const Duration(milliseconds: 800)); // Delay between steps in run mode
+      await Future.delayed(
+          const Duration(milliseconds: 800)); // Delay between steps in run mode
       _executeStep(); // Continue if still running
     } else {
       setState(() {
-        _highlightedInstructionIndex = -1; // Remove highlight if stopped or halted
+        _highlightedInstructionIndex =
+            -1; // Remove highlight if stopped or halted
         _highlightedBlock = null;
       });
     }
@@ -591,7 +624,8 @@ class _SAPHomePageState extends State<SAPHomePage> {
     _log("Simulação Resetada.");
     // Simulates reset time
     Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) { // Check if the widget is still mounted
+      if (mounted) {
+        // Check if the widget is still mounted
         setState(() {
           _isResetting = false; // Restore state after delay
         });
@@ -615,8 +649,10 @@ class _SAPHomePageState extends State<SAPHomePage> {
   // Adds a message to the log console
   void _log(String message) {
     setState(() {
-      _logMessages.add("[${DateTime.now().second.toString().padLeft(2, '0')}] $message");
-      if (_logMessages.length > 10) { // Keep log concise
+      _logMessages.add(
+          "[${DateTime.now().second.toString().padLeft(2, '0')}] $message");
+      if (_logMessages.length > 10) {
+        // Keep log concise
         _logMessages.removeAt(0);
       }
     });
@@ -629,7 +665,8 @@ class _SAPHomePageState extends State<SAPHomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Erro de Simulação', style: TextStyle(color: Colors.red)),
+        title: const Text('Erro de Simulação',
+            style: TextStyle(color: Colors.red)),
         content: Text(message),
         actions: [
           TextButton(
@@ -698,6 +735,18 @@ class _SAPHomePageState extends State<SAPHomePage> {
               ),
               SizedBox(height: 10),
               Text(
+                'Botões da Barra Inferior:',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+              Text(
+                '• Compilar: Transforma o código escrito em instruções que podem ser executadas pelo simulador.\n'
+                '• Próximo Passo: Executa uma instrução por vez, permitindo acompanhar a execução passo a passo.\n'
+                '• Resetar: Reinicia a simulação, apagando o progresso atual.\n'
+                '• Executar/Pausar: Executa automaticamente todas as instruções ou pausa a execução em andamento.',
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(height: 10),
+              Text(
                 'Instruções Suportadas:',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -747,14 +796,17 @@ class _SAPHomePageState extends State<SAPHomePage> {
         style: TextStyle(
           fontSize: 16,
           fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-          color: isCurrent ? Colors.teal.shade800 : Theme.of(context).textTheme.bodyLarge?.color,
+          color: isCurrent
+              ? Colors.teal.shade800
+              : Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
     );
   }
 
   // Widget for a single functional block (PC, IR, ACC, etc.)
-  Widget _sapBlock(String name, {String? value, String? imagePath, String? blockId}) {
+  Widget _sapBlock(String name,
+      {String? value, String? imagePath, String? blockId}) {
     final isActive = _highlightedBlock == blockId;
     return Card(
       color: isActive ? Colors.amber.shade100 : Colors.white,
@@ -769,7 +821,12 @@ class _SAPHomePageState extends State<SAPHomePage> {
           ),
           borderRadius: BorderRadius.circular(10),
           boxShadow: isActive
-              ? [BoxShadow(color: Colors.amber.shade200, blurRadius: 10, spreadRadius: 2)]
+              ? [
+                  BoxShadow(
+                      color: Colors.amber.shade200,
+                      blurRadius: 10,
+                      spreadRadius: 2)
+                ]
               : [],
         ),
         child: Column(
@@ -802,11 +859,13 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 },
                 child: Text(
                   value ?? "-",
-                  key: ValueKey(value), // Key helps AnimatedSwitcher identify changes
+                  key: ValueKey(
+                      value), // Key helps AnimatedSwitcher identify changes
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: isActive ? Colors.amber.shade900 : Colors.blue.shade700,
+                    color:
+                        isActive ? Colors.amber.shade900 : Colors.blue.shade700,
                   ),
                 ),
               ),
@@ -831,9 +890,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
                   child: Text(
                     "Registradores e Unidade Lógica Aritmética (ULA)",
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.teal.shade700,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          color: Colors.teal.shade700,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ),
                 IconButton(
@@ -848,10 +907,24 @@ class _SAPHomePageState extends State<SAPHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: _sapBlock("PC", value: _pc.toString(), imagePath: 'assets/pc.png', blockId: 'PC')),
-                Expanded(child: _sapBlock("IR", value: _currentInstruction, imagePath: 'assets/ir.png', blockId: 'IR')),
-                Expanded(child: _sapBlock("MAR", value: _mar.toString().isEmpty? "-":_mar.toString(), blockId: 'MAR')),
-                Expanded(child: _sapBlock("MDR", value: _mdr.toString() .isEmpty? "-":_mdr.toString(), blockId: 'MDR')),
+                Expanded(
+                    child: _sapBlock("PC",
+                        value: _pc.toString(),
+                        imagePath: 'assets/pc.png',
+                        blockId: 'PC')),
+                Expanded(
+                    child: _sapBlock("IR",
+                        value: _currentInstruction,
+                        imagePath: 'assets/ir.png',
+                        blockId: 'IR')),
+                Expanded(
+                    child: _sapBlock("MAR",
+                        value: _mar.toString().isEmpty ? "-" : _mar.toString(),
+                        blockId: 'MAR')),
+                Expanded(
+                    child: _sapBlock("MDR",
+                        value: _mdr.toString().isEmpty ? "-" : _mdr.toString(),
+                        blockId: 'MDR')),
               ],
             ),
             const SizedBox(height: 20),
@@ -859,9 +932,18 @@ class _SAPHomePageState extends State<SAPHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: _sapBlock("ACC", value: _acc.toString(), imagePath: 'assets/ac.png', blockId: 'ACC')),
-                Expanded(child: _sapBlock("ULA", imagePath: 'assets/ula.png', blockId: 'ULA')),
-                Expanded(child: _sapBlock("OUT", value: _out.toString() .isEmpty? "-": _out.toString(), blockId: 'OUT')),
+                Expanded(
+                    child: _sapBlock("ACC",
+                        value: _acc.toString(),
+                        imagePath: 'assets/ac.png',
+                        blockId: 'ACC')),
+                Expanded(
+                    child: _sapBlock("ULA",
+                        imagePath: 'assets/ula.png', blockId: 'ULA')),
+                Expanded(
+                    child: _sapBlock("OUT",
+                        value: _out.toString().isEmpty ? "-" : _out.toString(),
+                        blockId: 'OUT')),
                 Expanded(
                   child: Card(
                     color: Colors.white,
@@ -871,12 +953,19 @@ class _SAPHomePageState extends State<SAPHomePage> {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: _carryFlag || _zeroFlag ? Colors.blue.shade700 : Colors.grey.shade300,
+                          color: _carryFlag || _zeroFlag
+                              ? Colors.blue.shade700
+                              : Colors.grey.shade300,
                           width: _carryFlag || _zeroFlag ? 2.5 : 1,
                         ),
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: _carryFlag || _zeroFlag
-                            ? [BoxShadow(color: Colors.blue.shade200, blurRadius: 10, spreadRadius: 2)]
+                            ? [
+                                BoxShadow(
+                                    color: Colors.blue.shade200,
+                                    blurRadius: 10,
+                                    spreadRadius: 2)
+                              ]
                             : [],
                       ),
                       child: Column(
@@ -895,18 +984,24 @@ class _SAPHomePageState extends State<SAPHomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Flexible(
-                                child: Text("C: ${_carryFlag ? '1' : '0'}", style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: _carryFlag ? Colors.red.shade700 : Colors.grey.shade600,
-                                )),
+                                child: Text("C: ${_carryFlag ? '1' : '0'}",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: _carryFlag
+                                          ? Colors.red.shade700
+                                          : Colors.grey.shade600,
+                                    )),
                               ),
                               Flexible(
-                                child: Text("Z: ${_zeroFlag ? '1' : '0'}", style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: _zeroFlag ? Colors.red.shade700 : Colors.grey.shade600,
-                                )),
+                                child: Text("Z: ${_zeroFlag ? '1' : '0'}",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: _zeroFlag
+                                          ? Colors.red.shade700
+                                          : Colors.grey.shade600,
+                                    )),
                               ),
                             ],
                           ),
@@ -934,14 +1029,15 @@ class _SAPHomePageState extends State<SAPHomePage> {
             Text(
               "Memória RAM",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Colors.teal.shade700,
-                fontWeight: FontWeight.bold,
-              ),
+                    color: Colors.teal.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 10),
             GridView.builder(
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // Disable scrolling
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable scrolling
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4, // 4 columns for memory cells
                 childAspectRatio: 2.0,
@@ -958,11 +1054,18 @@ class _SAPHomePageState extends State<SAPHomePage> {
                     color: isHighlighted ? Colors.blue.shade100 : Colors.white,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isHighlighted ? Colors.blue.shade700 : Colors.grey.shade300,
+                      color: isHighlighted
+                          ? Colors.blue.shade700
+                          : Colors.grey.shade300,
                       width: isHighlighted ? 2 : 1,
                     ),
                     boxShadow: isHighlighted
-                        ? [BoxShadow(color: Colors.blue.shade200, blurRadius: 8, spreadRadius: 1)]
+                        ? [
+                            BoxShadow(
+                                color: Colors.blue.shade200,
+                                blurRadius: 8,
+                                spreadRadius: 1)
+                          ]
                         : [],
                   ),
                   child: Column(
@@ -973,7 +1076,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
                           "Addr: ${index.toString().padLeft(2, '0')}",
                           style: TextStyle(
                             fontSize: 12,
-                            color: isHighlighted ? Colors.blue.shade900 : Colors.grey.shade600,
+                            color: isHighlighted
+                                ? Colors.blue.shade900
+                                : Colors.grey.shade600,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -982,13 +1087,16 @@ class _SAPHomePageState extends State<SAPHomePage> {
                         child: Text(
                           "Val: ${_memory[index].toString()}",
                           style: TextStyle(
-                            fontSize: 16, // Increased font size for better readability
+                            fontSize:
+                                13, // Increased font size for better readability
                             fontWeight: FontWeight.bold,
-                            color: isHighlighted ? Colors.blue.shade900 : Colors.deepPurple.shade800,
+                            color: isHighlighted
+                                ? Colors.blue.shade900
+                                : Colors.deepPurple.shade800,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 4)
+                      const SizedBox(height: 6)
                     ],
                   ),
                 );
@@ -1012,9 +1120,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
             Text(
               "Console de Saída",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Colors.teal.shade700,
-                fontWeight: FontWeight.bold,
-              ),
+                    color: Colors.teal.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 10),
             Container(
@@ -1030,7 +1138,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 itemCount: _logMessages.length,
                 itemBuilder: (context, index) {
                   return Text(
-                    _logMessages[_logMessages.length - 1 - index], // Display in reverse order
+                    _logMessages[_logMessages.length -
+                        1 -
+                        index], // Display in reverse order
                     style: const TextStyle(
                       fontFamily: 'SourceCodePro',
                       color: Colors.lightGreenAccent,
@@ -1093,10 +1203,13 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                 children: [
                                   Text(
                                     "Editor de Código Assembly",
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.teal.shade700,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          color: Colors.teal.shade700,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                   const SizedBox(height: 10),
                                   TextField(
@@ -1105,11 +1218,15 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                     minLines: 10,
                                     decoration: const InputDecoration(
                                       labelText: 'Assembly Code',
-                                      hintText: 'Digite seu código Assembly aqui...',
+                                      hintText:
+                                          'Digite seu código Assembly aqui...',
                                     ),
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontFamily: 'SourceCodePro',
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontFamily: 'SourceCodePro',
+                                        ),
                                   ),
                                   const SizedBox(height: 16),
                                   // Removed the GridView.count from here
@@ -1126,18 +1243,27 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                 children: [
                                   Text(
                                     "Instruções Compiladas",
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: Colors.teal.shade700,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          color: Colors.teal.shade700,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                   const SizedBox(height: 8),
                                   Container(
-                                    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+                                    constraints: BoxConstraints(
+                                        maxHeight:
+                                            MediaQuery.of(context).size.height *
+                                                0.4),
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: _compiledInstructions.length,
-                                      itemBuilder: (context, index) => _buildInstructionLine(_compiledInstructions[index], index),
+                                      itemBuilder: (context, index) =>
+                                          _buildInstructionLine(
+                                              _compiledInstructions[index],
+                                              index),
                                     ),
                                   ),
                                 ],
@@ -1179,10 +1305,13 @@ class _SAPHomePageState extends State<SAPHomePage> {
                           children: [
                             Text(
                               "Editor de Código Assembly",
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.teal.shade700,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color: Colors.teal.shade700,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             const SizedBox(height: 10),
                             TextField(
@@ -1193,9 +1322,12 @@ class _SAPHomePageState extends State<SAPHomePage> {
                                 labelText: 'Assembly Code',
                                 hintText: 'Digite seu código Assembly aqui...',
                               ),
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontFamily: 'SourceCodePro',
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    fontFamily: 'SourceCodePro',
+                                  ),
                             ),
                             const SizedBox(height: 16),
                             // Removed the GridView.count from here
@@ -1212,18 +1344,21 @@ class _SAPHomePageState extends State<SAPHomePage> {
                           children: [
                             Text(
                               "Instruções Compiladas",
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.teal.shade700,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color: Colors.teal.shade700,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             const SizedBox(height: 8),
-                            Container(
-                              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: _compiledInstructions.length,
-                                itemBuilder: (context, index) => _buildInstructionLine(_compiledInstructions[index], index),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(
+                                _compiledInstructions.length,
+                                (index) => _buildInstructionLine(
+                                    _compiledInstructions[index], index),
                               ),
                             ),
                           ],
@@ -1241,8 +1376,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color:    Colors.teal.shade700,  // Using primary color for BottomAppBar
-        shape: const CircularNotchedRectangle(), // Adds a notch if you use a FloatingActionButton
+        color: Colors.teal.shade700, // Using primary color for BottomAppBar
+        shape:
+            const CircularNotchedRectangle(), // Adds a notch if you use a FloatingActionButton
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: Row(
@@ -1255,12 +1391,17 @@ class _SAPHomePageState extends State<SAPHomePage> {
                   child: ElevatedButton.icon(
                     onPressed: _isCompiling ? null : _compileCode,
                     icon: _isCompiling
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2))
                         : const Icon(Icons.build),
-                    label: Text(
-                      _isCompiling ? 'Compilando...' : 'Compilar',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    label: SizedBox.shrink(),
+                    // label: Text(
+                    //   _isCompiling ? 'Compilando...' : 'Compilar',
+                    //   style: const TextStyle(fontSize: 14),
+                    // ),
                   ),
                 ),
               ),
@@ -1269,11 +1410,16 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: ElevatedButton.icon(
-                    onPressed: _isHalted || _pc >= _compiledInstructions.length || _isRunning || _isCompiling || _isResetting
+                    onPressed: _isHalted ||
+                            _pc >= _compiledInstructions.length ||
+                            _isRunning ||
+                            _isCompiling ||
+                            _isResetting
                         ? null
                         : _executeStep,
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Próximo Passo', style: TextStyle(fontSize: 14)),
+                    label: SizedBox.shrink(),
+                    // label: const Text('Próximo Passo', style: TextStyle(fontSize: 14)),
                   ),
                 ),
               ),
@@ -1284,18 +1430,27 @@ class _SAPHomePageState extends State<SAPHomePage> {
                   child: OutlinedButton.icon(
                     onPressed: _isResetting || _isCompiling ? null : _reset,
                     icon: _isResetting
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2))
                         : const Icon(Icons.replay),
-                    label: Text(
-                      _isResetting ? 'Resetando...' : 'Resetar',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    // label: Text(
+                    //   _isResetting ? 'Resetando...' : 'Resetar',
+                    //   style: const TextStyle(fontSize: 14),
+                    // ),
+                    label: SizedBox.shrink(),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(
-                        color: _isResetting || _isCompiling ? Colors.grey : Colors.white, // Change border color when disabled
+                        color: _isResetting || _isCompiling
+                            ? Colors.grey
+                            : Colors.white, // Change border color when disabled
                         width: 2,
                       ),
-                      foregroundColor: _isResetting || _isCompiling ? Colors.grey : Colors.white, // Change text color when disabled
+                      foregroundColor: _isResetting || _isCompiling
+                          ? Colors.grey
+                          : Colors.white, // Change text color when disabled
                     ),
                   ),
                 ),
@@ -1305,14 +1460,18 @@ class _SAPHomePageState extends State<SAPHomePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: ElevatedButton.icon(
-                    onPressed: _isHalted || _pc >= _compiledInstructions.length || _isCompiling || _isResetting
+                    onPressed: _isHalted ||
+                            _pc >= _compiledInstructions.length ||
+                            _isCompiling ||
+                            _isResetting
                         ? null
                         : _toggleRun,
                     icon: Icon(_isRunning ? Icons.pause : Icons.play_circle),
-                    label: Text(
-                      _isRunning ? 'Pausar' : 'Executar',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    label: SizedBox.shrink(),
+                    // label: Text(
+                    //   _isRunning ? 'Pausar' : 'Executar',
+                    //   style: const TextStyle(fontSize: 14),
+                    // ),
                   ),
                 ),
               ),
