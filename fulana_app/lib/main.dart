@@ -329,8 +329,9 @@ class _SAPHomePageState extends State<SAPHomePage> {
         List<String> parts =
             line.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
 
-        if (parts.isEmpty)
+        if (parts.isEmpty) {
           continue; // Skip if only comments or empty after stripping
+        }
 
         String opcode = parts[0].toUpperCase();
         int? operand;
