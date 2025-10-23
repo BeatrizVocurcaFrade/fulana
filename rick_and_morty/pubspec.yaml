@@ -31,11 +31,25 @@ dev_dependencies:
   json_serializable: ^6.9.0
   flutter_lints: ^5.0.0
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+  macos: true
+  windows: true
+  linux: true
+  image_path_ios: "assets/icon-192.png"
+  image_path: "assets/icon-192.png"
+
 flutter_icons:
+  web:
+    generate: true
   android: true
   ios: true
   image_path: "assets/icon-192.png"
   image_path_ios: "assets/icon-192.png"
+  
 flutter_native_splash:
   color: "#B6DAEE"
   image: assets/icon-192.png 
