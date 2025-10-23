@@ -86,7 +86,7 @@ class InfoRow extends StatelessWidget {
         Text(
           value,
           style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
           ),
         ),
       ],
