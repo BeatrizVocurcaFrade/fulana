@@ -47,7 +47,26 @@ class _CharacterListPageState extends State<CharacterListPage> {
       body: BlocBuilder<CharacterCubit, CharacterState>(
         builder: (context, state) {
           return state.when(
-            initial: () => const Center(child: CircularProgressIndicator()),
+            initial: () => const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Color(0xFF97CE4C),
+                    strokeWidth: 4,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Carregando personagens...',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             loading: (characters) => CharacterListView(
                 characters: characters,
                 isLoading: true,
