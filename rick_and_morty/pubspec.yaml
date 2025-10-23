@@ -1,0 +1,46 @@
+name: rick_and_morty_app
+description: "Rick and Morty Flutter App"
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  json_annotation: ^4.9.0
+  flutter_bloc: ^8.1.4
+  freezed_annotation: ^2.4.1
+  http: ^1.2.0
+  cached_network_image: ^3.3.1
+  lottie: ^3.1.2
+  google_fonts: ^6.2.1
+  flutter_native_splash: ^2.4.3
+  animated_text_kit: ^4.2.2
+  provider: ^6.1.5+1
+  flutter_launcher_icons: ^0.14.1
+  hive: ^2.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.12
+  freezed: ^2.4.6
+  json_serializable: ^6.9.0
+  flutter_lints: ^5.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon-192.png"
+  image_path_ios: "assets/icon-192.png"
+flutter_native_splash:
+  color: "#B6DAEE"
+  image: assets/icon-192.png 
+  android: true
+  ios: true
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
