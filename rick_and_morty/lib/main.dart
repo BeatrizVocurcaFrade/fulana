@@ -43,17 +43,18 @@ class RickMortyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.dark(
             primary: const Color(0xFFB6DAEE),
-            surface: Colors.blue,
+            surface: Color(0xFFB6DAEE),
           ),
           textTheme: GoogleFonts.bangersTextTheme(
             Theme.of(context).textTheme.apply(
-                  bodyColor: Colors.white,
+                  bodyColor: Colors.black,
                 ),
           ),
+          scaffoldBackgroundColor: Colors.blue,
           appBarTheme: const AppBarTheme(
             centerTitle: true,
             foregroundColor: Colors.black,
-            backgroundColor: Color(0xFFB6DAEE),
+            backgroundColor: Colors.blue,
             elevation: 0,
           ),
         ),

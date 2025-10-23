@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../domain/domain.dart';
-
 import 'character_image.dart';
 
 class CharacterCard extends StatelessWidget {
@@ -16,6 +14,7 @@ class CharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final width = MediaQuery.of(context).size.width;
 
     return GestureDetector(
@@ -23,45 +22,45 @@ class CharacterCard extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
-        color: const Color(0xFFB6DAEE),
+        elevation: 6,
+        color: theme.colorScheme.surface,
+        shadowColor: Colors.black26,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CharacterImage(
-                character: character,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CharacterImage(character: character),
               ),
               const SizedBox(width: 16),
-              Flexible(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       character.name,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       character.species,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
+                      style: theme.textTheme.labelMedium
+                          ?.copyWith(color: Colors.black54),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(Icons.arrow_forward_ios,
-                  size: width * 0.045, color: Colors.black54),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: width * 0.045,
+                color: Colors.black54,
+              ),
             ],
           ),
         ),
