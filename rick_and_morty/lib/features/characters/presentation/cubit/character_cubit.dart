@@ -6,8 +6,6 @@ import '../../domain/domain.dart';
 part 'character_cubit.freezed.dart';
 part 'character_state.dart';
 
-
-
 class CharacterCubit extends Cubit<CharacterState> {
   final GetCharactersUseCase useCase;
   int _page = 1;
@@ -19,7 +17,7 @@ class CharacterCubit extends Cubit<CharacterState> {
   Future<void> loadCharacters() async {
     if (!_hasMore) return;
 
-    emit(CharacterState.loading(_characters)); 
+    emit(CharacterState.loading(_characters));
     try {
       final newCharacters = await useCase(_page);
       _characters.addAll(newCharacters);

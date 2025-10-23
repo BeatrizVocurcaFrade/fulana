@@ -12,7 +12,8 @@ class ApiClient {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        throw ApiException('Erro ${response.statusCode}: ${response.reasonPhrase}');
+        throw ApiException(
+            'Erro ${response.statusCode}: ${response.reasonPhrase}');
       }
     } catch (e) {
       throw ApiException('Falha na conexão: $e');

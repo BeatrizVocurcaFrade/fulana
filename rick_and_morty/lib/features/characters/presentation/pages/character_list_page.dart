@@ -29,45 +29,91 @@ class _CharacterListPageState extends State<CharacterListPage> {
   }
 
   @override
+  void dispose() {
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rick & Morty'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text(
+          'Rick & Morty',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: BlocBuilder<CharacterCubit, CharacterState>(
         builder: (context, state) {
           return state.when(
             initial: () => const Center(child: CircularProgressIndicator()),
-            loading: (characters) => _buildList(characters, isLoading: true),
-            loaded: (characters, hasMore) => _buildList(characters, hasMore: hasMore),
+            loading: (characters) => CharacterListView(
+                characters: characters,
+                isLoading: true,
+                controller: _controller),
+            loaded: (characters, hasMore) => CharacterListView(
+                characters: characters,
+                hasMore: hasMore,
+                controller: _controller),
             error: (msg) => Center(child: Text(msg)),
           );
         },
       ),
     );
   }
+}
 
-  Widget _buildList(List<CharacterEntity> characters,
-      {bool isLoading = false, bool hasMore = true}) {
+class CharacterListView extends StatelessWidget {
+  final List<CharacterEntity> characters;
+  final bool isLoading;
+  final bool hasMore;
+  final ScrollController controller;
+
+  const CharacterListView({
+    super.key,
+    required this.characters,
+    this.isLoading = false,
+    this.hasMore = true,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.builder(
-      controller: _controller,
-      itemCount: characters.length + (isLoading || hasMore ? 1 : 0),
-      itemBuilder: (context, i) {
-        if (i < characters.length) {
-          final character = characters[i];
-          return CharacterCard(character: character, onTap: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (_, __, ___) => CharacterDetailPage(character: character),
-                transitionsBuilder: (_, animation, __, child) =>
-                    FadeTransition(opacity: animation, child: child),
+      controller: controller,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      itemCount: characters.length + ((isLoading || hasMore) ? 1 : 0),
+      itemBuilder: (context, index) {
+        switch (index < characters.length) {
+          case true:
+            final character = characters[index];
+            return CharacterCard(
+              character: character,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (_, __, ___) =>
+                        CharacterDetailPage(character: character),
+                    transitionsBuilder: (_, animation, __, child) =>
+                        FadeTransition(opacity: animation, child: child),
+                  ),
+                );
+              },
+            );
+          case false:
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: SizedBox(
+                height: 300,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFB6DAEE),
+                  ),
+                ),
               ),
             );
-          });
-        } else {
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(child: CircularProgressIndicator()),
-          );
         }
       },
     );
