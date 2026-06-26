@@ -1,0 +1,2 @@
+/home/usuario/projects/pessoal/fulana/fulana/fulana_app/android/app/.cxx/Debug/2a5jn696/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/usuario/projects/pessoal/fulana/fulana/fulana_app/android/app/.cxx/Debug/2a5jn696/armeabi-v7a/CMakeFiles/rebuild_cache.dir

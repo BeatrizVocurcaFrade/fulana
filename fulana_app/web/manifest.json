@@ -1,6 +1,6 @@
 {
-    "name": "joyce_app",
-    "short_name": "joyce_app",
+    "name": "BISA",
+    "short_name": "BISA",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
