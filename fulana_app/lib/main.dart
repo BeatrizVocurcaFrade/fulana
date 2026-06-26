@@ -1728,8 +1728,25 @@ class _FinalPageState extends State<FinalPage> {
       return;
     }
 
-    final message =
-        'A roleta escolheu: ${widget.date.title} + ${widget.gesture.title}. Topa?';
+    String cleanDescription(String? value) {
+      return (value ?? '').trim();
+    }
+
+    final dateDescription = cleanDescription(widget.date.subtitle);
+    final gestureDescription = cleanDescription(widget.gesture.subtitle);
+
+    final message = [
+      '🎡 A roleta decidiu nosso rolê!',
+      '',
+      '📍 Plano escolhido: ${widget.date.title}',
+      if (dateDescription.isNotEmpty) '   $dateDescription',
+      '',
+      '✨ Detalhe especial: ${widget.gesture.title}',
+      if (gestureDescription.isNotEmpty) '   $gestureDescription',
+      '',
+      '💌 Veredito: esse combo ficou com a nossa cara.',
+      'Topa fazer acontecer?'
+    ].join('\n');
     final encodedMessage = Uri.encodeComponent(message);
 
     final appUri = Uri.parse(
