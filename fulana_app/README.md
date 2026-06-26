@@ -1,4 +1,4 @@
-# BISA❤️
+# BISA
 
 A new Flutter project.
 
